@@ -18,6 +18,8 @@ def create_app():
     def app_admin():
         return render_template('admin.html')
 
-
+    @app.route('/main')
+    def app_main():
+        return render_template('main.html')
 
     return app

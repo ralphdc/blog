@@ -3,4 +3,4 @@
 
 from flask_sqlalchemy import SQLAlchemy
 
-appdb  = SQLAlchemy()
+db  = SQLAlchemy()
