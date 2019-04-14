@@ -2,18 +2,17 @@
 
 from flask_script import  Manager, Shell, Server
 from flask_migrate import Migrate, MigrateCommand
-from app import create_app
-from app.appsql import appdb
+from app import app
+from app import db
+from app.models import *
 
 
-app = create_app()
 manager = Manager(app)
-appdb.init_app(app)
-migrate = Migrate(app, appdb)
+migrate = Migrate(app, db)
 
 
 def make_shell_context():
-    return dict(app=app, appdb=appdb)
+    return dict(app=app, db=db)
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)

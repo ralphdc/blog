@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
+from .Default import Default
 
-class Product():
-
-    BLOG_NAME = '天涯飞鸿'
+class Product(Default):
 
     # sqlalchemy
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://blog:Blog1234@127.0.0.1:3306/blog?charset=utf8"

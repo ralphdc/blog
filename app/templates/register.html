@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>{{ session.get('title') or '董超的个人博客 - 用户注册'}}</title>
+    <meta name="keywords" content="{{ session.get('keywords') or '董超, 自动化运维, devops, docker,kubernetes, zabbix, saltstack, grafana' }}">
+    <meta name="description" content="{{ session.get('description') or '这是董超的个人博客，欢迎网友留言交流' }}">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.min.css') }}" rel="stylesheet">
+    <script>
+        if (window.top !== window.self) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</head>
+
+<body class="gray-bg">
+<div class="alert alert-warning">
+            <p>创建一个新账户</p>
+        </div>
+<div class="middle-box text-center   animated fadeInDown">
+    <div>
+        <div>
+
+            <h1 class="logo-name">H+</h1>
+
+        </div>
+        <h3>欢迎注册系统！</h3>
+
+        <div>
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        <form class="form-horizontal" method="POST" action="{{ url_for('app_register') }}">
+          <div class="form-group">
+            <label for="username" class="col-sm-4 control-label">{{ form.username.label }}</label>
+            <div class="col-sm-8">
+                {{ form.username(class_="form-control") }}
+            </div>
+            <div class="col-sm-2">
+                <span style="color: red;">{{ form.username.error }}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email" class="col-sm-4 control-label">{{ form.email.label }}</label>
+            <div class="col-sm-8">
+              {{ form.email(class_="form-control") }}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password" class="col-sm-4 control-label">{{ form.password.label }}</label>
+            <div class="col-sm-8">
+              {{ form.password(class_="form-control") }}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="repassword" class="col-sm-4 control-label">{{ form.repassword.label }}</label>
+            <div class="col-sm-8">
+              {{ form.repassword(class_="form-control") }}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="blog_url" class="col-sm-4 control-label">{{ form.blog.label }}</label>
+            <div class="col-sm-8">
+              {{ form.blog(class_="form-control") }}
+            </div>
+          </div>
+          <div class="form-group text-left">
+                <div class="checkbox i-checks">
+                    <label class="no-padding">
+                        <input type="checkbox">
+                        <i></i> 我同意注册协议
+                    </label>
+                </div>
+               {{ form.csrf_token }}
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-primary block full-width m-b">注 册</button>
+            </div>
+          </div>
+           <p class="text-muted text-center">
+                <small>已经有账户了？</small>
+                <a href="{{ url_for('app_login') }}">点此登录</a>
+           </p>
+        </form>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/jquery/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js') }}"></script>
+
+</body>
+
+</html>

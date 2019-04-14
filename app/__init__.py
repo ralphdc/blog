@@ -1,25 +1,29 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template
+from flask import Flask
 from config import Config
+from .utils import check_login
+from flask_login import LoginManager
+from flask_login import current_user, login_user
+from flask_sqlalchemy import SQLAlchemy
 
 
-def create_app():
 
-    app = Flask(__name__)
+app = Flask(__name__)
 
-    app.config.from_object(Config())
+app.config.from_object(Config())
 
-    @app.route('/')
-    def app_index():
-        return 'Hello World!'
+db = SQLAlchemy(app)
 
-    @app.route('/admin')
-    def app_admin():
-        return render_template('admin.html')
+login = LoginManager(app)
 
-    @app.route('/main')
-    def app_main():
-        return render_template('main.html')
+from .views import *
 
-    return app
+
+
+
+
+
+
+
+

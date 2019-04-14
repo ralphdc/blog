@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
 
-class Develop():
+from .Default import Default
 
-    BLOG_NAME = '天涯飞鸿'
+class Develop(Default):
+
 
     DEBUG = True
 
     #sqlalchemy
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://blog:Blog1234@47.100.56.218:3306/blog?charset=utf8"
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://blog:Blog1234@127.0.0.1:3306/blog?charset=utf8"
 
     SQLALCHEMY_POOL_SIZE = 5000
 
