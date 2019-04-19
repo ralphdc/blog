@@ -33,5 +33,7 @@ class RegisterForm(FlaskForm):
 
 class LoginForm(FlaskForm):
 
-    email = StringField(label='电子邮件', validators=[DataRequired(message="请输入邮件地址"), Email(message="邮件地址格式错误！")])
-    password = PasswordField(label='密码', validators=[DataRequired(message="请输入密码"), Length(7, 20, message="密码长度请保持在7到20之间")])
+    email = StringField(label='电子邮件:', validators=[DataRequired(message="请输入邮件地址"), Email(message="邮件地址格式错误！")])
+    password = PasswordField(label='密码:', validators=[DataRequired(message="请输入密码"), Length(7, 20, message="密码长度请保持在7到20之间")])
+    remember_me = BooleanField(label='remember_me')
+    submit = SubmitField(label='登录')

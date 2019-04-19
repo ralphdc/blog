@@ -14,3 +14,11 @@ class Product(Default):
     SQLALCHEMY_POOL_RECYCLE = 1200
 
     SQLALCHEMY_MAX_OVERFLOW = 2000
+
+    MONGO_DATABASE_URI = "mongodb://blog:Blog1234@127.0.0.1:27017/"
+
+    REDIS_HOST = '127.0.0.1'
+
+    REDIS_PORT = 6379
+
+    REDIS_DB = 1

@@ -4,8 +4,8 @@
 from .db import db
 from sqlalchemy.sql import func
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
-from app import login
+from flask_login import UserMixin, AnonymousUserMixin
+from app import login_manager
 
 
 class Visit(db.Model):
@@ -47,6 +47,11 @@ class User(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
 
 
+    #添加id属性， 解决flask_login读取id字段不兼容的问题；
+    @property
+    def id(self):
+        return self.user_id
+
     @property
     def password(self):
         raise AttributeError('Password is not a readable attribute')
@@ -57,7 +62,7 @@ class User(UserMixin, db.Model):
 
 
     def check_password(self, pwd):
-        return check_password_hash(self.password, pwd)
+        return check_password_hash(self.user_password, pwd)
 
     def __init__(self, user_name, user_password, user_email, user_url):
         self.user_name = user_name
@@ -65,8 +70,13 @@ class User(UserMixin, db.Model):
         self.user_email = user_email
         self.user_url = user_url
 
+class AnonymousUser(AnonymousUserMixin):
+    '''
+    继承至该类的用户模型 将作为未登陆时的用户模型,可以保持代码的一致性。
+    '''
+    def is_admin(self): # 自行定义的方法,用于权限判断
+        return False
 
-
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

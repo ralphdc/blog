@@ -32,16 +32,48 @@
 
             </div>
             <h3>欢迎登录博客管理系统</h3>
-
-            <form class="m-t" role="form" action="index.html">
+            <div>
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+            <form class="form-horizontal" method="POST" role="form" action="{{ url_for('app_login') }}">
+                {{ form.csrf_token() }}
                 <div class="form-group">
-                    <input type="email" class="form-control" placeholder="用户名" required="">
+                    <label for="username" class="col-sm-4 control-label">{{ form.email.label }}</label>
+                    <div class="col-sm-8">
+                        {{ form.email(class_="form-control", size=100) }}
+                    </div>
+                    <div class="col-sm-4">
+                        <span style="color: red;">{{ form.email.error }}</span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" placeholder="密码" required="">
-                </div>
-                <button type="submit" class="btn btn-primary block full-width m-b">登 录</button>
 
+                <div class="form-group">
+                    <label for="password" class="col-sm-4 control-label">{{ form.password.label }}</label>
+                    <div class="col-sm-8">
+                        {{ form.password(class_="form-control") }}
+                    </div>
+                    <div class="col-sm-4">
+                        <span style="color: red;">{{ form.password.error }}</span>
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <div class="col-sm-4">
+                    </div>
+                      <div class="col-sm-8">
+                        <div class="checkbox">
+                            <label>
+                              {{ form.remember_me(value='True') }} {{ form.remember_me.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <p>{{ form.submit(class_="btn btn-primary block full-width m-b") }}</p>
 
                 <p class="text-muted text-center">
                     <a href="login.html#">
