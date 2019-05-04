@@ -4,7 +4,8 @@
 
 from functools import wraps
 from flask import request, redirect, render_template, session, url_for
-
+import os
+import hashlib
 
 
 def check_login(func):
@@ -14,3 +15,11 @@ def check_login(func):
             return redirect(url_for('app_login'))
         return func(*args, **kwargs)
     return decorated_function
+
+
+
+
+
+def getRandomKey():
+
+    return hashlib.md5(os.urandom(24)).hexdigest()

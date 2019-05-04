@@ -20,4 +20,9 @@ class Default():
     SECRET_KEY = hashlib.md5(os.urandom(24)).hexdigest()
 
     #设置session有效期；
-    PERMANENT_SESSION_LIFETIME = timedelta(minutes=20)
+    PERMANENT_SESSION_LIFETIME = timedelta(days=7)
+
+
+    BASICSET_COLLECTION = 'setting'
+
+    FLASKY_POST_PER_PAGE = 10

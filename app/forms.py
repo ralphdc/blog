@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, TextAreaField, HiddenField
 from wtforms.validators import ValidationError, DataRequired, Email, Length, EqualTo
-from .models import User
+from wtforms.fields.html5 import URLField
+from wtforms.validators import url
+from .models import User, BoardUser
 
 
 
@@ -37,3 +39,15 @@ class LoginForm(FlaskForm):
     password = PasswordField(label='密码:', validators=[DataRequired(message="请输入密码"), Length(7, 20, message="密码长度请保持在7到20之间")])
     remember_me = BooleanField(label='remember_me')
     submit = SubmitField(label='登录')
+
+
+
+class MsgBoardForm(FlaskForm):
+    nickname    = StringField(label='昵称：', validators=[DataRequired(message='请输入昵称!'), Length(5, 10, message='昵称长度请在5-10之间')])
+    email       = StringField(label='邮箱地址：', validators=[DataRequired(message='请输入邮箱地址!'), Email(message='请输入正确的电子邮件地址')])
+    blog        = URLField(label='个人主页：', validators=[url(message='URL地址错误！')])
+    board_content     = TextAreaField(label='留言内容：', validators=[DataRequired(message='请填写留言内容！')])
+    commentType = HiddenField (label='评论类型', validators=[DataRequired(message='无法确定您提交的是评论还是回复!')], default='1')
+    commentTarget = HiddenField (label='回复对象', validators=[])
+    submit = SubmitField(label='提交')
+

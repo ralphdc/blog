@@ -21,9 +21,20 @@ class Develop(Default):
 
     MONGO_DATABASE_URI = "mongodb://blog:Blog1234@127.0.0.1:27017/"
 
+    MONGO_HOST = '127.0.0.1'
+
+    MONGO_PORT = 27017
+
+    MONGO_USER = 'blog'
+
+    MONGO_PWD = 'Blog1234'
+
+    MONGO_DB = 'blog'
+
     REDIS_HOST = '127.0.0.1'
 
     REDIS_PORT = 6379
 
     REDIS_DB = 1
 
+    BOARD_COMMENT_TIME_LIMIT = 5

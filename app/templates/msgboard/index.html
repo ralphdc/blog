@@ -1,0 +1,134 @@
+{% extends 'blog.html' %}
+
+{% block content %}
+
+<!-- start page -->
+<div id="page">
+
+	{% include 'sidebar.html' %}
+
+	<!-- start content -->
+	<div id="content">get_reply
+		<div class="post">
+			<div class="row">
+				<div class="col-sm-12">
+					<ol class="commentlist">
+						{% for bd in boards %}
+						<li class="depth-1">
+						  <div class="comment-info"> <img alt="" src="images/gravatar.jpg" class="avatar" height="40" width="40"> <cite> <a href="#">{{ bd[3] }}</a> Says: <br>
+							<span class="comment-data"><a href="#">{{ bd[2] }}</a></span> </cite> </div>
+						  <div class="comment-text">
+							<p>{{ bd[1] }}</p>
+							<div class="reply"> <a class="btn btn-primary" href="#commentForm" onclick="give_replay({{ bd[0] }})">回复</a> </div>
+						  </div>
+							{{ bd[0] | get_reply(1)| safe }}
+						</li>
+						{% endfor %}
+					</ol>
+
+				</div>
+			</div>
+			{% if boards %}
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6">
+					{% import 'pagination.html' as pagination %}
+					<p>
+						{{ pagination.pagination_widget(paginate, endpoint) }}
+					</p>
+
+				</div>
+				<div class="col-sm-3"></div>
+			</div>
+			{% endif %}
+		</div>
+
+		<div class="post">
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6">
+					<div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>留言区</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="form_basic.html#">选项1</a>
+                            </li>
+                            <li>
+                                <a href="form_basic.html#">选项2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+					 {% for message in get_flashed_messages() %}
+					<div class="alert alert-warning">
+						{{ message }}
+					</div>
+					{% endfor %}
+                    <form class="form-horizontal m-t" id="commentForm" action="{{ url_for('msgboard.msgboard_index') }}" method="POST">
+						{{ form.csrf_token() }}
+						{{ form.commentType }}
+						{{ form.commentTarget }}
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">{{ form.nickname.label }}</label>
+                            <div class="col-sm-8">
+                                {{ form.nickname(class_='form-control') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">{{ form.email.label }}</label>
+                            <div class="col-sm-8">
+                                {{ form.email(class_='form-control') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">{{ form.blog.label }}</label>
+                            <div class="col-sm-8">
+                                {{ form.blog(class_='form-control') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">{{ form.board_content.label }}</label>
+                            <div class="col-sm-8">
+                               {{ form.board_content(class_='form-control') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-3">
+                                {{ form.submit(class_='btn btn-primary') }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+				</div>
+        		<div class="col-sm-3"></div>
+    		</div>
+		</div>
+		<br style="clear: both;" />
+	</div>
+	<script type="text/javascript">
+
+		function give_replay(bdid)
+		{
+			$('#commentType').val(2);
+			$('#commentTarget').val(bdid);
+		}
+	</script>
+	<!-- end content -->
+	<br style="clear: both;" />
+</div>
+<!-- end page -->
+
+{% endblock %}

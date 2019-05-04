@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ session.get('title') }}</title>
+    <meta name="keywords" content="{{ session.get('keywords') }}" />
+    <meta name="description" content="{{ session.get('description') }}" />
+	<link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/blog.css')}}" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+{% include 'navigation.html' %}
+
+{% block content %} {% endblock %}
+{% include 'footer.html' %}
+
+</body>
+</html>

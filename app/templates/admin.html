@@ -7,10 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <title>H+ 后台主题UI框架 - 主页</title>
-
-    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
-    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+    <title>{{ session.get('title') }}</title>
+    <meta name="keywords" content="{{ session.get('keywords') }}">
+    <meta name="description" content="{{ session.get('description') }}">
 
     <!--[if lt IE 9]>
     <meta http-equiv="refresh" content="0;ie.html"/><![endif]-->
@@ -60,41 +59,45 @@
                     </div>
                 </li>
                 <li>
-                    <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i>
-                        <span class="nav-label">基本设置</span></a>
+                    <a class="J_menuItem" href="/setting" data-index="10"><i class="fa fa-coffee"></i>
+                        <span class="nav-label">基本设置</span>
+                    </a>
                 </li>
                 <li>
-                    <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i>
+                    <a class="J_menuItem" href="layouts.html" data-index="20">
+                        <i class="fa fa-book"></i>
                         <span class="nav-label">文章管理</span></a>
                 </li>
                 <li>
-                    <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i>
-                        <span class="nav-label">分类管理</span></a>
+                    <a class="J_menuItem" href="layouts.html" data-index="30"><i class="fa fa-tasks"></i>
+                        <span class="nav-label">分类管理</span>
+                    </a>
                 </li>
                 <li>
-                    <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i>
+                    <a class="J_menuItem" href="layouts.html" data-index="40"><i class="fa fa-clipboard"></i>
                         <span class="nav-label">评论和留言</span></a>
                 </li>
                  <li>
-                    <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i>
+                    <a class="J_menuItem" href="layouts.html" data-index="50"><i class="fa fa-users"></i>
                         <span class="nav-label">用户管理</span></a>
                 </li>
                  <li>
-                    <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i>
+                    <a class="J_menuItem" href="layouts.html" data-index="60"><i class="fa fa-image"></i>
                         <span class="nav-label">相册管理</span></a>
                 </li>
                  <li>
-                    <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i>
+                    <a class="J_menuItem" href="layouts.html" data-index="70"><i class="fa fa-file"></i>
                         <span class="nav-label">文件管理</span></a>
                 </li>
                 <li>
-                    <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i>
+                    <a class="J_menuItem" href="layouts.html" data-index="80"><i class="fa fa-hand-o-up"></i>
                         <span class="nav-label">友情链接</span></a>
                 </li>
                 <li>
-                    <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i>
+                    <a class="J_menuItem" href="layouts.html" data-index="90"><i class="fa fa-heart"></i>
                         <span class="nav-label">滔滔心情</span></a>
                 </li>
+                 {{ menu | safe }}
             </ul>
         </div>
     </nav>
@@ -155,20 +158,13 @@
     <!--右侧部分结束-->
 </div>
 <script src="{{ url_for('static', filename='js/jquery/jquery.min.js') }}"></script>
-
 <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
-
 <script src="{{ url_for('static', filename='js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
-
 <script src="{{ url_for('static', filename='js/plugins/layer/layer.min.js') }}"></script>
-
 <script src="{{ url_for('static', filename='js/hplus.min.js') }}"></script>
-
 <script src="{{ url_for('static', filename='js/contabs.min.js') }}"></script>
-
 <script src="{{ url_for('static', filename='js/plugins/pace/pace.min.js') }}"></script>
-
 </body>
 
 </html>

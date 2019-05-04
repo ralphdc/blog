@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
+
+    <title>{{ session.get('title') }}</title>
+    <meta name="keywords" content="{{ session.get('keywords') }}">
+    <meta name="description" content="{{ session.get('description') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.min.css') }}" rel="stylesheet">
 </head>
-<body>
-    <div class="row  border-bottom white-bg dashboard-header">
-    <div class="col-sm-12">
-        <h2>以梦为马</h2>
-        <p>
-            一直坚信，<b>越努力，越幸运！</b>
-        </p>
-    </div>
-</div>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
 
+{% block content %} {% endblock %}
+
+</div>
 <script src="{{ url_for('static', filename='js/jquery/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
@@ -26,5 +27,19 @@
 <script src="{{ url_for('static', filename='js/hplus.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/contabs.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/plugins/pace/pace.min.js') }}"></script>
+
+<script type="text/javascript">
+
+var csrftoken = $('meta[name=csrf-token]').attr('content')
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken)
+        }
+    }
+})
+</script>
+
 </body>
 </html>
