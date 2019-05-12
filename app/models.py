@@ -215,8 +215,19 @@ class Module(db.Model):
     module_parent   = db.Column(db.Integer, nullable=False)
     module_status   = db.Column(db.CHAR(1), nullable=False, server_default='1')
     module_icon     = db.Column(db.String(255), nullable=False, server_default='fa fa-user')
+    module_description = db.Column(db.String(255), nullable=True, server_default='-')
     created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+    def __init__(self, module_name, module_url, module_parent, module_status='1', module_icon='fa fa-user', module_description=None):
+        self.module_name = module_name
+        self.module_url = module_url
+        self.module_parent = module_parent
+        self.module_status = module_status
+        self.module_icon = module_icon
+        self.module_description = module_description
+
 
 
 class RoleAndModule(db.Model):
@@ -234,3 +245,11 @@ class RoleAndModule(db.Model):
 
     created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+    def __init__(self, role_id, module_id):
+        self.role_id = role_id
+        self.module_id = module_id
+
+
+

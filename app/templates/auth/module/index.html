@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新建一级菜单</button>
+<div class="zTreeDemoBackground left">
+    <ul id="treeDemo" class="ztree" style="width:230px; overflow:auto;"></ul>
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">新建一级菜单</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal m-t" id="dataForm" novalidate="novalidate">
+                     <div class="form-group">
+                        <label class="col-sm-3 control-label">上级节点：</label>
+                        <div class="col-sm-8">
+                            <select class="selectpicker" name="module_parent" id="module_parent">
+                                <option value="0">/</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">菜单名称：</label>
+                        <div class="col-sm-8">
+                            <input id="module_name" name="module_name" minlength="2" type="text" class="form-control" required="" aria-required="true">
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label class="col-sm-3 control-label">菜单图标：</label>
+                        <div class="col-sm-8">
+                            <input id="module_icon" name="module_icon" minlength="2" type="text" class="form-control" required="" aria-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">菜单URL：</label>
+                        <div class="col-sm-8">
+                            <input id="module_url"  name="module_url" type="text" class="form-control" required="" aria-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">菜单状态：</label>
+                        <div class="col-sm-8">
+                           <label class="radio-inline">
+                              <input type="radio" name="module_status" value="1" checked> 有效
+                            </label>
+                            <label class="radio-inline">
+                              <input type="radio" name="module_status" value="0"> 无效
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">说明：</label>
+                        <div class="col-sm-8">
+                            <textarea id="module_description" name="module_description" class="form-control" required="" aria-required="true"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="modelSubmit">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script type="text/javascript">
+
+var setting = {
+                view: {
+                    dblClickExpand: false,//双击节点时，是否自动展开父节点的标识
+                    showLine: true,//是否显示节点之间的连线
+                    fontCss:{'color':'black','font-weight':'bold'},//字体样式函数
+                    selectedMulti: false //设置是否允许同时选中多个节点
+                },
+
+                check:{
+                    chkboxType: { "Y": "", "N": "" },
+                    chkStyle: "checkbox",//复选框类型
+                    enable: false //每个节点上是否显示 CheckBox
+                },
+                 edit:{
+                    enable: false,
+                    editNameSelectAll: true,
+                    showRemoveBtn : true,
+                    showRenameBtn : true,
+                    removeTitle : "remove",
+                    renameTitle : "rename"
+                },
+                async: {
+                    enable: true,
+                    url:"/auth/tree",
+                    autoParam:[],
+                    contentType: "application/json",
+                    otherParam:{},
+                    type: 'post',
+                    dataFilter: filter //异步获取的数据filter 里面可以进行处理  filter 在下面
+                },
+                data: {
+                    simpleData: {
+                        enable:true,
+                        idKey: "id",
+                        pIdKey: "pid",
+                        rootPId: ""
+                    }
+                },//个人理解加上这个就能按级别显示，其中的id pid 对应你的实体类
+                callback: {
+                    onClick: function(treeId, treeNode) {
+                        var treeObj = $.fn.zTree.getZTreeObj(treeNode);
+                        var selectedNode = treeObj.getSelectedNodes()[0];
+                        $("#txtId").val(selectedNode.id);
+                        $("#txtAddress").val(selectedNode.name);
+                    }
+                } //这里是节点点击事件
+        };
+
+        function filter(treeId, parentNode, childNodes) {
+            if (!childNodes) return null;
+            for (var i=0, l=childNodes.length; i<l; i++) {
+                childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+            }
+            return childNodes;
+        }
+
+
+
+
+
+
+
+$(document).ready(function(){
+
+
+
+    $.fn.zTree.init($("#treeDemo"), setting);
+});
+
+
+$('#modelSubmit').click(function(){
+
+    var fd = new FormData(document.getElementById('dataForm'));
+     $.ajax({
+                url: '{{ url_for('auth.auth_tree_create') }}',
+                type: 'POST',
+                data: fd,                    // 上传formdata封装的数据
+                dataType: 'JSON',
+                cache: false,                      // 不缓存
+                processData: false,                // jQuery不要去处理发送的数据
+                contentType: false,                // jQuery不要去设置Content-Type请求头
+                success:function (data) {           //成功回调
+                    console.log(data);
+                }
+     });
+
+
+})
+
+</script>
+{% endblock %}

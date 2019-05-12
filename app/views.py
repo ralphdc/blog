@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from app import app, db
-from flask import session, render_template, redirect, url_for, request, flash
+from flask import session, render_template, redirect, url_for, request, flash, make_response, jsonify
 from sqlalchemy import and_
 from .forms import RegisterForm, LoginForm
 from flask_login import current_user, login_user, logout_user, login_required
@@ -11,7 +11,7 @@ from .models import BoardUser, BoardContent
 from .models import User, UserAndRole, Role, RoleAndModule, Module
 from app.utils import getRandomKey
 
-
+#递归，获取菜单项目；
 def get_user_menu(mid=0, level=1):
 
     if level == 1:
@@ -31,13 +31,14 @@ def get_user_menu(mid=0, level=1):
 
     menu_html = ''
 
-    menu = db.session.query(User.user_name, Module.module_id, Module.module_url, Module.module_name, Module.module_icon) \
+    menu = db.session.query(User.user_name, Module.module_id, Module.module_url, Module.module_name, Module.module_icon, Role.role_id) \
         .outerjoin(UserAndRole, UserAndRole.map_uid == User.user_id) \
         .outerjoin(Role, Role.role_id == UserAndRole.map_oid) \
         .outerjoin(RoleAndModule, Role.role_id == RoleAndModule.role_id) \
         .outerjoin(Module, Module.module_id == RoleAndModule.module_id) \
         .filter(and_(User.user_status == '1', Role.role_status == '1', Module.module_status == '1', Module.module_parent==mid, User.user_email == email)) \
         .all()
+
     if menu :
         if level == 1:
             menu_html += ''
@@ -51,8 +52,6 @@ def get_user_menu(mid=0, level=1):
         level += 1
         for m in menu:
             menu_html += '<li><a {} href="{}" {}> <i class="{}"></i> <span class="nav-label">{}</span> {} </a>{}'.format(aClass, m[2], dataIndex, m[4],  m[3],  aTag, endli)
-
-
             menu_html += get_user_menu(m[1], level)
 
         menu_html += end_html
@@ -70,6 +69,9 @@ def before_request():
     if not session.get('header'):
         session['header'] = app.config.get('BLOG_HEADER')
 
+    if not current_user.is_authenticated:
+        if request.is_xhr:
+            return make_response(jsonify({"code": 1, "message": "请重新登录！"}))
 
 @app.route('/')
 def app_index():
@@ -80,7 +82,6 @@ def app_index():
 def app_admin():
     #获取当前用户权限-菜单；
     user_menu = get_user_menu()
-    print(user_menu)
     return render_template('admin.html', menu=user_menu)
 
 
@@ -116,6 +117,7 @@ def app_login():
         password = form.password.data
 
         UserModel = User.query.filter_by(user_email=email).first()
+
         if UserModel is None or not UserModel.check_password(password):
             flash("用户名或密码错误！")
             return redirect(url_for('app_login'))
@@ -133,6 +135,19 @@ def app_login():
             raise
         finally:
             db.session.close()
+
+        try:
+            RoleModule = db.session.query(User.user_name, Role.role_id) \
+                .outerjoin(UserAndRole, UserAndRole.map_uid == User.user_id) \
+                .outerjoin(Role, Role.role_id == UserAndRole.map_oid) \
+                .filter(User.user_email == email) \
+                .first()
+        except Exception as e:
+            raise
+        finally:
+            db.session.close()
+
+        session['role_id'] = RoleModule[1]
 
         return redirect(next_page)
     elif form.errors:

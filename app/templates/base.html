@@ -9,9 +9,14 @@
     <meta name="keywords" content="{{ session.get('keywords') }}">
     <meta name="description" content="{{ session.get('description') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+
     <link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='js/plugins/ztree/css/zTreeStyle/zTreeStyle.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='js/plugins/bootstrap-select/css/bootstrap-select.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/jquery/jquery.min.js') }}"></script>
+
 </head>
 <body class="gray-bg">
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -19,7 +24,6 @@
 {% block content %} {% endblock %}
 
 </div>
-<script src="{{ url_for('static', filename='js/jquery/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
 <script src="{{ url_for('static', filename='js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
@@ -27,6 +31,10 @@
 <script src="{{ url_for('static', filename='js/hplus.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/contabs.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/plugins/pace/pace.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plugins/ztree/js/jquery.ztree.all.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plugins/bootstrap-select/js/i18n/defaults-zh_CN.min.js') }}"></script>
+
 
 <script type="text/javascript">
 
@@ -40,6 +48,7 @@ $.ajaxSetup({
     }
 })
 </script>
+
 
 </body>
 </html>
