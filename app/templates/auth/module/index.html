@@ -71,6 +71,15 @@
     </div><!-- /.modal -->
 </div>
 
+
+<!-- 右键弹出菜单 -->
+<div class="RightMenu">
+    <ul>
+        <li>编辑节点</li>
+        <li>新建子节点</li>
+        <li>删除节点</li>
+    </ul>
+</div>
 <script type="text/javascript">
 
 var setting = {
@@ -117,6 +126,12 @@ var setting = {
                         var selectedNode = treeObj.getSelectedNodes()[0];
                         $("#txtId").val(selectedNode.id);
                         $("#txtAddress").val(selectedNode.name);
+                    },
+
+                    onRightClick: function(event, treeId, treeNode){
+
+
+
                     }
                 } //这里是节点点击事件
         };
