@@ -2,10 +2,136 @@
 
 {% block content %}
 
+<style type="text/css">
 
-<button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新建一级菜单</button>
-<div class="zTreeDemoBackground left">
-    <ul id="treeDemo" class="ztree" style="width:230px; overflow:auto;"></ul>
+
+.RightMenu{
+    width: 130px;
+    border: 1px #ccc solid;
+    background:#FFF;
+    padding:2px;
+    display: none;
+    position:absolute;
+}
+
+.RightMenu ul{
+    list-style-type:none;
+    padding:2px 10px;
+}
+
+
+.RightMenu ul li{
+    list-style-type:none;
+    padding:5px;
+}
+
+
+.RightMenu ul li a{
+    font-size: 12px;
+}
+
+</style>
+<div class="row animated fadeInRight">
+    <div class="col-sm-2">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新建一级菜单</button>
+    </div>
+
+</div>
+<div class="row animated fadeInRight">
+    <div class="col-sm-2">
+        <div class="zTreeDemoBackground left">
+            <ul id="treeDemo" class="ztree"></ul>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>节点信息</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="profile.html#">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li>
+                            <a href="profile.html#">选项1</a>
+                        </li>
+                        <li>
+                            <a href="profile.html#">选项2</a>
+                        </li>
+                    </ul>
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div class="feed-activity-list">
+                        <div id="treeNodeDetail">
+                           <!--  <p><i class="fa fa-hand-pointer-o"></i> 请点击左侧节点查看信息！</p>  !-->
+                            <form method="get" class="form-horizontal">
+                                 <div class="form-group">
+                                    <label class="col-sm-2 control-label">父节点名称：</label>
+                                    <div class="col-sm-10">
+                                        <h3 id="display_parent_name"></h3>
+                                    </div>
+                                </div>
+	                            <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">节点名称：</label>
+                                    <div class="col-sm-10">
+                                        <h3 id="display_node_name"></h3>
+                                    </div>
+                                </div>
+	                            <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">菜单图标：</label>
+
+                                    <div class="col-sm-10">
+                                        <h3 id="display_icon"></h3>
+                                    </div>
+                                </div>
+	                            <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">菜单URL:</label>
+
+                                    <div class="col-sm-10">
+                                        <h3 id="display_url"></h3>
+                                    </div>
+                                </div>
+	                            <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">菜单状态：</label>
+                                    <div class="col-sm-10">
+                                       <p id="display_module_status"></p>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">说明：</label>
+                                    <div class="col-sm-10">
+                                        <p id="display_des" ></p>
+                                    </div>
+                                </div>
+                                <!--
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-sm-offset-2">
+                                        <button class="btn btn-primary" type="submit">保存内容</button>
+                                        <button class="btn btn-white" type="submit">取消</button>
+                                    </div>
+                                </div>
+                                !-->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- 模态框（Modal） -->
@@ -26,6 +152,7 @@
                             </select>
                         </div>
                     </div>
+                    <input type="hidden" name="module_id" id="module_id"/>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">菜单名称：</label>
                         <div class="col-sm-8">
@@ -74,12 +201,9 @@
 
 <!-- 右键弹出菜单 -->
 <div class="RightMenu">
-    <ul>
-        <li>编辑节点</li>
-        <li>新建子节点</li>
-        <li>删除节点</li>
-    </ul>
+
 </div>
+
 <script type="text/javascript">
 
 var setting = {
@@ -121,42 +245,146 @@ var setting = {
                     }
                 },//个人理解加上这个就能按级别显示，其中的id pid 对应你的实体类
                 callback: {
-                    onClick: function(treeId, treeNode) {
-                        var treeObj = $.fn.zTree.getZTreeObj(treeNode);
-                        var selectedNode = treeObj.getSelectedNodes()[0];
-                        $("#txtId").val(selectedNode.id);
-                        $("#txtAddress").val(selectedNode.name);
-                    },
-
-                    onRightClick: function(event, treeId, treeNode){
-
-
-
-                    }
+                    onClick: zTreeOnClick,
+                    onRightClick: zTreeOnRightClick
                 } //这里是节点点击事件
         };
 
-        function filter(treeId, parentNode, childNodes) {
-            if (!childNodes) return null;
-            for (var i=0, l=childNodes.length; i<l; i++) {
-                childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+function filter(treeId, parentNode, childNodes) {
+    if (!childNodes) return null;
+    for (var i=0, l=childNodes.length; i<l; i++) {
+        childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+    }
+    return childNodes;
+}
+
+function zTreeOnClick(event, treeId, treeNode) {
+    //alert(treeNode.tId + ", " + treeNode.name);
+    $.get('/auth/query/' + treeNode.id, function(res){
+        if(res.code == 0){
+            $('#display_node_name').html(res.data.module_name)
+            $('#display_icon').html(res.data.module_icon)
+            $('#display_url').html(res.data.module_url)
+            $('#display_des').html(res.data.module_description)
+            $('#display_parent_name').html(res.data.module_parent_name)
+            if (res.data.module_status == '1'){
+                $('#display_module_status').html("<span>有效</span>")
+            }else{
+                $('#display_module_status').html("<span style='color:#FF0000'>无效</span>")
             }
-            return childNodes;
+        }else{
+            layer.alert(res.message);
         }
+    })
+};
+
+function zTreeOnRightClick(event, treeId, treeNode) {
 
 
+    var parentNode = treeNode.getParentNode()
+    if(! parentNode){
+        parent_json={'pname':'/', 'pid':0}
+    }else{
+        parent_json={'pname':parentNode.name, 'pid':parentNode.id}
+    }
 
 
+    var pageX=event.pageX;
+    var pageY=event.pageY;
+
+    rightMenuHtml = '';
+    rightMenuHtml += '<ul>';
+    rightMenuHtml += '<li><i class="fa fa-pencil-square-o"></i> <a href="#" onclick="createNode(\'' + treeId + '\',' + treeNode.id + ',\'' + treeNode.name+ '\'' + ')">' + '新建子节点' + '</a></li>';
+    rightMenuHtml += '<li><i class="fa fa-pencil-square-o"></i> <a href="#" onclick="editNode(' + treeNode.id + ')">' + '编辑节点' + '</a></li>';
+    rightMenuHtml += '<li><i class="fa fa-pencil-square-o"></i> <a href="#" onclick="deleteNode(\'' + treeId + '\',' + treeNode.id + ')">' +'删除节点' + '</a></li>';
+    rightMenuHtml += '</ul>';
+
+    $('.RightMenu').html(rightMenuHtml)
+
+    $('.RightMenu').show().css({'top':pageY, 'left':pageX});
+
+    return false;
+};
 
 
+function editNode(nid){
+
+    $.get('/auth/query/' + nid, function(res){
+        if(res.code == 0){
+
+             if(res.data.module_parent > 0){
+                parent_name = res.data.module_parent_name;
+             }else{
+                parent_name = '/';
+             }
+            $('#dataForm')[0].reset();
+            $('#module_parent').children().remove();
+            $('#module_parent').append("<option value='" + res.data.module_parent + "'>" + parent_name + "</option>");
+            $('#module_parent').prop("disabled", true);
+            $('#module_parent').selectpicker('refresh');
+            $('#module_parent').selectpicker('render');
+
+            $('#module_name').val(res.data.module_name);
+            $('#module_icon').val(res.data.module_icon);
+            $('#module_url').val(res.data.module_url);
+            $('#module_id').val(res.data.module_id);
+            $('#module_description').val(res.data.module_description)
+
+            //set module_status
+            if(res.data.module_status ==  "1"){
+                 $("input:radio[name=module_status][value=1]").attr("checked",true);
+            }else{
+                 $("input:radio[name=module_status][value=0]").attr("checked",true);
+            }
+            $('#myModal').modal('show');
+        }
+    })
+}
+
+
+function createNode(treeId, nodeId, nodeName){
+    $('#dataForm')[0].reset();
+    $('#module_parent').children().remove();
+    $('#module_parent').append("<option value='" + nodeId + "'>" +nodeName + "</option>");
+    $('#module_parent').selectpicker('refresh');
+    $('#module_parent').selectpicker('render');
+
+    $('#myModal').modal('show');
+}
+
+
+function deleteNode(treeId, nodeId){
+    parent.layer.confirm('确定删除节点吗？', {
+        btn: ['确定','取消'], //按钮
+    shade: false //不显示遮罩
+    }, function(){
+        $.post("{{ url_for('auth.auth_delete_node') }}", {'nid': nodeId}, function(res){
+            if(res.code == 0){
+                var treeObj = $.fn.zTree.getZTreeObj(treeId);
+                treeObj.reAsyncChildNodes(null, "refresh");
+                parent.layer.msg(res.message, {icon: 1});
+            }else{
+                parent.layer.msg(res.message, {shift: 6});
+            }
+        })
+    }, function(){
+    });
+}
 
 $(document).ready(function(){
 
 
-
     $.fn.zTree.init($("#treeDemo"), setting);
+
 });
 
+
+
+$(document).click(function(){
+    if($('.RightMenu').is(':visible')){
+        $('.RightMenu').hide();
+    }
+})
 
 $('#modelSubmit').click(function(){
 
@@ -170,12 +398,16 @@ $('#modelSubmit').click(function(){
                 processData: false,                // jQuery不要去处理发送的数据
                 contentType: false,                // jQuery不要去设置Content-Type请求头
                 success:function (data) {           //成功回调
-                    console.log(data);
+                    layer.alert(data.message)
+                    $('#dataForm')[0].reset();
+                    $('#myModal').modal('hide');
+                    var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+                    treeObj.reAsyncChildNodes(null, "refresh");
                 }
      });
-
-
 })
+
+
 
 </script>
 {% endblock %}

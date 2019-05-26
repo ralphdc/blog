@@ -17,14 +17,10 @@ def get_user_menu(mid=0, level=1):
     if level == 1:
         end_html = '</li>'
         endli = ''
-        dataIndex = ''
-        aClass = ''
         aTag = '<span class="fa arrow"></span>'
     else:
-        dataIndex = 'data-index="{}"'.format(getRandomKey())
         end_html = '</ul>'
         endli = '</li>'
-        aClass = 'class="J_menuItem"'
         aTag = ''
 
     email = current_user.user_email
@@ -37,20 +33,19 @@ def get_user_menu(mid=0, level=1):
         .outerjoin(RoleAndModule, Role.role_id == RoleAndModule.role_id) \
         .outerjoin(Module, Module.module_id == RoleAndModule.module_id) \
         .filter(and_(User.user_status == '1', Role.role_status == '1', Module.module_status == '1', Module.module_parent==mid, User.user_email == email)) \
+        .order_by(Module.created_at.desc()) \
         .all()
 
     if menu :
         if level == 1:
             menu_html += ''
-        elif level == 2:
-            menu_html += '<ul class="nav nav-second-level">'
-        elif level == 3:
-            menu_html += '<ul class="nav nav-third-level">'
         else:
-            raise Exception("[Error] Currently menu level is limited to 3! ")
+            menu_html += '<ul class="nav nav-{}-level">'.format(level)
 
         level += 1
         for m in menu:
+            aClass = '' if not m[2].startswith('/') else 'class="J_menuItem"'
+            dataIndex = '' if not m[2].startswith('/') else 'data-index="{}"'.format(getRandomKey())
             menu_html += '<li><a {} href="{}" {}> <i class="{}"></i> <span class="nav-label">{}</span> {} </a>{}'.format(aClass, m[2], dataIndex, m[4],  m[3],  aTag, endli)
             menu_html += get_user_menu(m[1], level)
 

@@ -170,7 +170,6 @@ class Role(db.Model):
     role_name   = db.Column(db.String(255), nullable=False)
     role_des    = db.Column(db.String(255), nullable=True)
     role_status = db.Column(db.CHAR(1), nullable=False, server_default='1')
-
     created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
 
