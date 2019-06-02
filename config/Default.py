@@ -26,3 +26,7 @@ class Default():
     BASICSET_COLLECTION = 'setting'
 
     FLASKY_POST_PER_PAGE = 10
+
+    PAGE_LIMIT = 20
+
+    PAGE_OFFSET = 1

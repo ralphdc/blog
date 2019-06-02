@@ -43,11 +43,13 @@ from .main import main as main_blueprint
 from .setting import setting as setting_blueprint
 from .msgboard import msgboard as msgboard_blueprint
 from .auth import auth as auth_blueprint
+from .category import category as category_blueprint
 
 app.register_blueprint(main_blueprint, url_prefix='/main')
 app.register_blueprint(setting_blueprint, url_prefix='/setting')
 app.register_blueprint(msgboard_blueprint, url_prefix='/msgboard')
 app.register_blueprint(auth_blueprint, url_prefix='/auth')
+app.register_blueprint(category_blueprint, url_prefix='/category')
 
 
 app.logger.addHandler(handler)

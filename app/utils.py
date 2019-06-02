@@ -23,3 +23,23 @@ def check_login(func):
 def getRandomKey():
 
     return hashlib.md5(os.urandom(24)).hexdigest()
+
+
+
+
+def make_row(title, datas):
+
+    if not isinstance(datas, list):
+        raise Exception("[Error] - datas error!")
+
+    if not isinstance(title, tuple):
+        raise Exception("[Error] - title type error! ")
+
+    if len(title) != len(datas[0]):
+        raise Exception("[Error] - row data not match!")
+
+    row = []
+    for data in datas:
+        row.append(dict(zip(title, data)))
+
+    return row

@@ -252,3 +252,104 @@ class RoleAndModule(db.Model):
 
 
 
+class Article(db.Model):
+    __tablename__ = 'bg_article'
+
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8',
+        'mysql_collate': 'utf8_unicode_ci'
+    }
+
+
+    article_id  = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    article_title = db.Column(db.String(255), nullable=True, server_default='-') #标题；
+    article_description = db.Column(db.String(1024), nullable=True, server_default='-') #内容摘要；
+    article_content = db.Column(db.Text(), nullable=False, server_default='-') #文章内容
+    article_creator = db.Column(db.String(255), nullable=True, server_default='-') #作者
+    article_display = db.Column(db.CHAR(1), nullable=False, server_default='1') #是否显示
+    article_limited = db.Column(db.CHAR(1), nullable=False, server_default='0')  #访问是否需密码；
+    article_password = db.Column(db.String(255), nullable=True)
+    article_top = db.Column(db.CHAR(1), nullable=True, server_default='0') #是否置顶
+    article_status = db.Column(db.CHAR(1), nullable=True, server_default='0') # 发布/草稿
+    article_allow = db.Column(db.CHAR(1), nullable=True, server_default='1') #是否允许评论
+
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+
+
+
+    def __init__(self, **kwargs):
+        self.article_title = kwargs.get('airticle_title')
+        self.article_description = kwargs.get('article_description') or '-'
+        self.article_content = kwargs.get('article_content')
+        self.article_creator = kwargs.get('article_creator')
+        self.article_display = kwargs.get('article_display') or '1'
+        self.article_limited = kwargs.get('article_limited') or '0'
+        self.article_top = kwargs.get('article_top') or '0'
+        self.article_status = kwargs.geT('article_status') or '0'
+        self.article_allow = kwargs.geT('article_allow') or '1'
+
+
+
+        if not self.article_title or not self.article_content or not self.article_creator:
+            raise Exception("[Error] - please check article's title or content or creator!")
+
+    @property
+    def password(self):
+        raise AttributeError('Password is not a readable attribute')
+
+    @password.setter
+    def password(self, pwd):
+        self.article_password = generate_password_hash(pwd)
+
+    def check_password(self, pwd):
+        return check_password_hash(self.article_password, pwd)
+
+
+class Category(db.Model):
+    __tablename__ = 'bg_category'
+
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8',
+        'mysql_collate': 'utf8_unicode_ci'
+    }
+
+    category_id  = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    category_content = db.Column(db.String(255), nullable=False)
+    category_description = db.Column(db.String(1024), nullable=True)
+    category_creator = db.Column(db.String(255), nullable=False)
+    category_status = db.Column(db.CHAR(1), nullable=True, server_default='1')
+
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    def __init__(self, **kwargs):
+        category_content = kwargs.get('category_content')
+        category_description = kwargs.get('category_description')
+        category_creator = kwargs.get('category_creator')
+        category_status = kwargs.get('category_status') or '1'
+
+        if not category_content or not category_creator:
+            raise Exception("[Error]- Please check category_content and category_creator!")
+
+
+class ArticleCategoryMap(db.Model):
+    __tablename__ = 'bg_article_category_map'
+
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8',
+        'mysql_collate': 'utf8_unicode_ci'
+    }
+
+    map_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    article_id = db.Column(db.Integer, nullable=False)
+    category_id = db.Column(db.Integer, nullable=False)
+
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+

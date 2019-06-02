@@ -8,3 +8,4 @@ auth = Blueprint('auth', __name__)
 
 from .module import *
 
+from .user import *
