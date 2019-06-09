@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import render_template, make_response, jsonify, request, flash
-from flask_login import current_user
+from flask import render_template, make_response, jsonify, request, flash, session
 from app import app, db
 from app.models import User
 from sqlalchemy import func
@@ -37,7 +36,7 @@ def auth_user():
 
     else:
 
-        if current_user.user_name != 'administrator':
+        if session.get('user').get('user_name') != 'administrator':
             flash('目前只有超级管理员才具有用户管理权限！')
         return render_template('auth/user/index.html')
 

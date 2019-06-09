@@ -2,12 +2,11 @@
 
 from flask import Flask, make_response, jsonify
 from config import Config
-from .utils import check_login
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CsrfProtect
-import redis
 from .logger import handler
+import redis
 
 app = Flask(__name__)
 
@@ -30,13 +29,9 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'app_login'
 
 
-redisCache = redis.Redis(connection_pool=redis.ConnectionPool(
-    host=app.config.get('REDIS_HOST'),
-    port=app.config.get('REDIS_PORT'),
-    db=app.config.get('REDIS_DB'))
-)
-
-
+Pool = redis.ConnectionPool(host=app.config.get('REDIS_HOST'), port=app.config.get('REDIS_PORT'), db=app.config.get('REDIS_DB'), max_connections=10)
+rdx = redis.StrictRedis(connection_pool=Pool)
+rdx.set('hello', 'world')
 
 from .views import *
 from .main import main as main_blueprint

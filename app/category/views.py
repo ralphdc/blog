@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from flask import render_template, make_response, jsonify, request
+from flask import render_template, make_response, jsonify, request, session
+
 from app.utils import *
 from app import db, app
 from app.models import Category, User
@@ -23,9 +24,7 @@ def category_index():
         limit = int(limit)
         offset = int(offset)
 
-        print(limit)
-        print(offset)
-        qy = db.session.query(Category.category_content, Category.category_creator, Category.category_status, Category.created_at, User.user_name) \
+        qy = db.session.query(Category.category_id,Category.category_content, Category.category_creator, Category.category_status, Category.created_at, User.user_name) \
             .outerjoin(User, User.user_id==Category.category_creator)
         if category_name:
             qy = qy.filter(Category.user_name == category_name)
@@ -34,14 +33,39 @@ def category_index():
         qy = qy.all()
 
         if qy:
-            title = ('category_content', 'category_creator', 'category_status', 'created_at', 'user_name')
+            title = ('category_id','category_content', 'category_creator', 'category_status', 'created_at', 'user_name')
             rows = make_row(title, qy)
-            return make_response(jsonify({"code": 0, "message": "SUCCESS", "rows": rows, "count": count}))
+            return make_response(jsonify({"code": 0, "message": "SUCCESS", "rows": rows, "total": count}))
         else:
             return make_response(jsonify({"code": 1, "message": "查询数据库失败！"}))
-
     else:
         return render_template('category/index.html')
+
+
+
+@category.route('/add', methods=['POST'])
+@category.route('/add/<int:id>', methods=['POST'])
+def category_add(id=None):
+
+    category_content = request.form.get('category_content')
+    category_status = request.form.get('category_status') or '1'
+    category_description = request.form.get('category_description')
+
+    if not category_content or not category_status:
+        return make_response(jsonify({"code":1, "message": "请填写分类标题！"}))
+
+    if id:
+        pass
+    else:
+        try:
+            category = Category(category_content=category_content, category_description=category_description, category_creator=current_user.user_name, category_status=category_status)
+            db.session.add(category)
+            db.session.commit()
+            return make_response(jsonify({"code": 0, "message": "提交成功"}))
+        except Exception as e:
+            app.logger.exception(e)
+            return make_response(jsonify({"code": 1, "message": "执行错误，请联系管理员！"}))
+
 
 
 

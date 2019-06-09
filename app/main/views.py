@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from flask import render_template, request, make_response,jsonify
-from flask_login import login_required, current_user
 from app.models import Visit
 from app import app, db
 import datetime
@@ -9,9 +8,7 @@ from . import main
 
 
 
-
 @main.route('/', methods=['GET'])
-@login_required
 def main_index():
 
     today_date = datetime.date.today()

@@ -4,12 +4,13 @@ from app import app, db
 from flask import session, render_template, redirect, url_for, request, flash, make_response, jsonify
 from sqlalchemy import and_
 from .forms import RegisterForm, LoginForm
-from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from .models import Visit
 from .models import BoardUser, BoardContent
 from .models import User, UserAndRole, Role, RoleAndModule, Module
-from app.utils import getRandomKey
+from app.utils import *
+from app import rdx
+import json
 
 #递归，获取菜单项目；
 def get_user_menu(mid=0, level=1):
@@ -23,7 +24,7 @@ def get_user_menu(mid=0, level=1):
         endli = '</li>'
         aTag = ''
 
-    email = current_user.user_email
+    email = session['user']['user_email']
 
     menu_html = ''
 
@@ -55,6 +56,35 @@ def get_user_menu(mid=0, level=1):
 
 @app.before_request
 def before_request():
+    FILTER = True
+    paths = request.path.split('/')
+    if paths:
+        for path in paths:
+            if path in app.config.get('IMMUNITY_PATH'):
+                FILTER = None
+                break
+    if FILTER:
+        ukey = None
+        if session.get('user'):
+            ukey = session.get('user').get('ukey')
+        if not ukey:
+            ukey = request.cookies.get('ukey')
+        if not ukey or not redis_get(ukey):
+            if request.is_xhr:
+                return make_response(jsonify({"code": 1, "message": "请重新登录！"}))
+            else:
+                return redirect(url_for('app_login'))
+
+        if not session.get('user'):
+            user_info = json.loads(redis_get(ukey))
+            if not user_info:
+                return make_response(jsonify({"code": 1, "message": "请重新登录！"}))
+            session['user'] = dict()
+            session['user']['ukey'] = ukey
+            session['user']['user_name'] = user_info.get('user_name')
+            session['user']['user_id'] = user_info.get('user_id')
+            session['user']['user_email'] = user_info.get('user_email')
+
     if not session.get('title'):
         session['title'] = app.config.get('BLOG_TITLE')
     if not session.get('keywords'):
@@ -64,26 +94,23 @@ def before_request():
     if not session.get('header'):
         session['header'] = app.config.get('BLOG_HEADER')
 
-    if not current_user.is_authenticated:
-        if request.is_xhr:
-            return make_response(jsonify({"code": 1, "message": "请重新登录！"}))
 
 @app.route('/')
 def app_index():
     return render_template('index.html', navigate_active='index')
 
 @app.route('/admin')
-@login_required
 def app_admin():
     #获取当前用户权限-菜单；
     user_menu = get_user_menu()
-    return render_template('admin.html', menu=user_menu)
+    resp = make_response(render_template('admin.html', menu=user_menu))
+    resp.set_cookie('ukey', session['user']['ukey'], max_age=app.config.get('COOKIE_MAX_AGE'))
+    resp.headers['blogTag'] = 'Hello World'
+    return resp
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def app_login():
-    session.permanent = True
-
 
 
     #pycharm重启导致Session失效，这里使用自动登录；
@@ -97,14 +124,14 @@ def app_login():
     return redirect(next_page)
     '''
 
+    ukey = None
+    if session.get('user'):
+        ukey = session.get('user').get('ukey')
+    if not ukey:
+        ukey = request.cookies.get('ukey')
 
-
-
-
-
-
-    if current_user.is_authenticated:
-        return redirect(url_for('app_index'))
+    if ukey and  redis_get(ukey):
+        return redirect(url_for('app_admin'))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -116,35 +143,34 @@ def app_login():
         if UserModel is None or not UserModel.check_password(password):
             flash("用户名或密码错误！")
             return redirect(url_for('app_login'))
-        login_user(UserModel, remember=form.remember_me.data)
+
+        #设置登录；
+        user_name = UserModel.get_user_name()
+        user_id = UserModel.get_user_id()
+        user_email = UserModel.get_user_email()
+        ukey = get_user_key(user_name)
+        session['user'] = dict()
+        session['user']['ukey'] = ukey
+        session['user']['user_name'] = user_name
+        session['user']['user_id'] = user_id
+        session['user']['user_email'] = user_email
+        uvalue = {'user_name': user_name, 'user_id':user_id, 'user_email': user_email}
+        redis_set(ukey, json.dumps(uvalue))
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('app_admin')
         # add login history
         try:
             clientIP = request.remote_addr or '0.0.0.0'
-            db.session.add(Visit(current_user.user_name, clientIP))
+            db.session.add(Visit(user_name, clientIP))
             db.session.commit()
         except Exception as e:
             app.logger.exception(e)
             raise
         finally:
             db.session.close()
-
-        try:
-            RoleModule = db.session.query(User.user_name, Role.role_id) \
-                .outerjoin(UserAndRole, UserAndRole.map_uid == User.user_id) \
-                .outerjoin(Role, Role.role_id == UserAndRole.map_oid) \
-                .filter(User.user_email == email) \
-                .first()
-        except Exception as e:
-            raise
-        finally:
-            db.session.close()
-
-        session['role_id'] = RoleModule[1]
-
         return redirect(next_page)
+
     elif form.errors:
         for field_name, errors in form.errors.items():
             for error in errors:
@@ -154,7 +180,7 @@ def app_login():
 
 @app.route('/logout')
 def app_logout():
-    logout_user()
+    rdx.delete(session['user']['ukey'])
     return redirect(url_for('app_login'))
 
 

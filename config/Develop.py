@@ -35,6 +35,16 @@ class Develop(Default):
 
     REDIS_PORT = 6379
 
+    REDIS_POOL_INSTANCE = 10
+
     REDIS_DB = 1
 
+    REDIS_TIMEOUT = 20 * 60
+
+    REDIS_AUTH_PREFIX = 'auth'
+
     BOARD_COMMENT_TIME_LIMIT = 5
+
+    COOKIE_MAX_AGE = 7 * 24 * 60
+
+    IMMUNITY_PATH = ['login', 'static']

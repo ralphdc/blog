@@ -72,9 +72,14 @@ class User(UserMixin, db.Model):
     def check_password(self, pwd):
         return check_password_hash(self.user_password, pwd)
 
-    def get_user_role(self):
-        return db.session.query()
+    def get_user_name(self):
+        return self.user_name
 
+    def get_user_email(self):
+        return self.user_email
+
+    def get_user_id(self):
+        return self.user_id
 
     def __init__(self, user_name, user_password, user_email, user_url):
         self.user_name = user_name
@@ -328,12 +333,12 @@ class Category(db.Model):
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
 
     def __init__(self, **kwargs):
-        category_content = kwargs.get('category_content')
-        category_description = kwargs.get('category_description')
-        category_creator = kwargs.get('category_creator')
-        category_status = kwargs.get('category_status') or '1'
+        self.category_content = kwargs.get('category_content')
+        self.category_description = kwargs.get('category_description')
+        self.category_creator = kwargs.get('category_creator')
+        self.category_status = kwargs.get('category_status') or '1'
 
-        if not category_content or not category_creator:
+        if not self.category_content or not self.category_creator:
             raise Exception("[Error]- Please check category_content and category_creator!")
 
 

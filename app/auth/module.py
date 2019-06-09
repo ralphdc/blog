@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from  flask import render_template, make_response, request, jsonify, session
-from flask_login import current_user
 from app import app, db
 from app.models import User, UserAndRole, Role, RoleAndModule, Module
 from sqlalchemy import and_, func
@@ -17,7 +16,7 @@ class getTreeInterface():
     def getTreeInterface(self, mid=0):
 
 
-        email = current_user.user_email
+        email = session.get('user').get('user_email')
         menu = db.session.query(User.user_name, Module.module_id, Module.module_name, Module.module_parent, Module.created_at) \
             .outerjoin(UserAndRole, UserAndRole.map_uid == User.user_id) \
             .outerjoin(Role, Role.role_id == UserAndRole.map_oid) \
