@@ -31,10 +31,10 @@ def get_user_key(user_name):
 def make_row(title, datas):
 
     if not isinstance(datas, list):
-        raise Exception("[Error] - datas error!")
+        raise Exception("[Error] - datas error! It must to be list!")
 
     if not isinstance(title, tuple):
-        raise Exception("[Error] - title type error! ")
+        raise Exception("[Error] - title type error! It must to be tuple!")
 
     if len(title) != len(datas[0]):
         raise Exception("[Error] - row data not match!")

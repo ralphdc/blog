@@ -2,23 +2,22 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox float-e-margins">
+        <div class="col-sm-12">
+            <div class="ibox">
                 <div class="ibox-title">
                     <h5>文章分类管理
                     </h5>
                 </div>
-
                 <div class="ibox-content p-md">
                     <form class="form-inline" role="form" onsubmit="return false">
                         <div class="form-group">
                             <input type="email" placeholder="请输入用户名" id="exampleInputEmail2" class="form-control">
                             <button name="queryBtn" id="queryBtn" class="btn btn-success" type="button">查询</button>
-                            <button class="btn btn-primary" type="button" id="dataNewBtn">新建分类</button>
+                            <button class="btn btn-primary" type="button" id="createArticleBtn" data-url="{{}}">新建文章</button>
                         </div>
                     </form>
 
-                    <table id="blogDataTable"></table>
+                    <table id="DataTable"></table>
 
                 </div>
             </div>
@@ -27,7 +26,7 @@
 
 
 <!-- 模态框（Modal） -->
-<div class="modal fade" id="newDataModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="DataModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -35,11 +34,12 @@
                 <h4 class="modal-title" id="myModalLabel">新建分类</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal m-t" id="newDataForm" novalidate="novalidate">
+                <form class="form-horizontal m-t" id="DataForm" novalidate="novalidate">
                      <div class="form-group">
                         <label class="col-sm-3 control-label">分类名称</label>
                         <div class="col-sm-8">
                             <input type="text" id="category_content" name="category_content" class="form-control"/>
+                            <input type="hidden" id="category_id" name="category_id" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -62,8 +62,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="dataNewModalCloseBtn">关闭</button>
-                <button type="button" class="btn btn-primary" data-url="{{ url_for('category.category_add') }}" id="dataNewModalSubmitBtn">提交更改</button>
+                <button type="button" class="btn btn-default" id="dataModalCloseBtn">关闭</button>
+                <button type="button" class="btn btn-primary" data-url="{{ url_for('category.category_add') }}" id="dataModalSubmitBtn">提交更改</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
@@ -72,10 +72,42 @@
 
 <script type="text/javascript">
 
-function createCategory(){
-   // $('#dataForm')[0].reset();
-    $('#catagoryModal').modal('show')
-}
+window.operateEvents = {
+    'click .dataEditBtn': function (e, value, row, index) {
+         $.ajax({
+                method:"POST",
+                url:'{{ url_for('category.category_query') }}',
+                dataType:"JSON",
+                data:{'cid':value},
+                success:function(response){
+                    if(response.code == 0){
+                        $('#category_content').val(response.data[0].category_content);
+                        $("input:radio[name=category_status][value="+ response.data[0].category_status + "]").attr("checked",true);
+                        $('#category_description').val(response.data[0].category_description);
+                        $('#category_id').val(response.data[0].category_id);
+                        $('#DataModal').modal('show');
+                    }
+                }
+        })
+     },
+    'click .dataDelBtn': function (e, value, row, index) {
+
+        layer.confirm('确定删除吗？', {
+            btn: ['确定', '取消']
+        }, function(){
+            $.ajax({
+                method:"POST",
+                url:'{{ url_for('category.category_delete') }}',
+                dataType:"JSON",
+                data:{'cid':value},
+                success:function(response){
+                    layer.alert(response.message);
+                    $('#DataTable').bootstrapTable('refresh');
+                }
+            })      
+        }, function(){})
+     }
+};
 
 
 $(function () {
@@ -90,7 +122,7 @@ var TableInit = function () {
     var oTableInit = new Object();
     //初始化Table
     oTableInit.Init = function () {
-        $('#blogDataTable').bootstrapTable({
+        $('#DataTable').bootstrapTable({
             url: '{{url_for('category.category_index')}}',         //请求后台的URL（*）
             method: 'post',                      //请求方式（*）
             //toolbar: '#toolbar',                //工具按钮用哪个容器
@@ -116,32 +148,41 @@ var TableInit = function () {
             //showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
             cardView: false,                    //是否显示详细视图
             detailView: false,                   //是否显示父子表
-            columns: [
-            {
-                field: 'category_content',
-                title: '分类名称'
-            }, {
-                field: 'user_name',
-                title: '创建者'
-            }, {
-                field: 'category_status',
-                title: '状态',
-                formatter:function(value, row, index){
-                    if(value==1){
-                        return '<p><span class="badge badge-primary">有效</span></p>'
-                    }else{
-                        return '<p><span class="badge badge-primary">无效</span></p>'
+            columns: [{
+                        field: 'number',
+                        title: '序号',
+                        formatter: function(value, row, index){
+                            var pageSize    = $('#DataTable').bootstrapTable('getOptions').pageSize;
+                            var pageNumber  = $('#DataTable').bootstrapTable('getOptions').pageNumber;
+                            return '<span class="label label-success">' + (pageSize * (pageNumber - 1) + index + 1 ) + '</span>';
+                        }
+                },
+                {
+                    field: 'category_content',
+                    title: '分类名称'
+                }, {
+                    field: 'user_name',
+                    title: '创建者'
+                }, {
+                    field: 'category_status',
+                    title: '状态',
+                    formatter:function(value, row, index){
+                        if(value==1){
+                            return '<p><span class="badge badge-primary">有效</span></p>'
+                        }else{
+                            return '<p><span class="badge badge-primary">无效</span></p>'
+                        }
                     }
-                }
-            },{
-                field: 'created_at',
-                title: '创建时间'
-            },
-            {
-                field: 'operate',
-                title: '操作',
-                formatter: operateFormatter //自定义方法，添加操作按钮
-            },
+                },{
+                    field: 'created_at',
+                    title: '创建时间'
+                },
+                {
+                    field: 'category_id',
+                    title: '操作',
+                    events: 'operateEvents',
+                    formatter: operateFormatter //自定义方法，添加操作按钮
+                },
             ],
             rowStyle: function (row, index) {
                 var classesArr = ['success', 'info'];
@@ -154,7 +195,6 @@ var TableInit = function () {
                 return { classes: strclass };
             },//隔行变色
         });
-
     };
 
 
@@ -172,41 +212,38 @@ var TableInit = function () {
 
 function operateFormatter(value, row, index) {//赋予的参数
     return [
-        '<button type="button" class="btn btn-primary btn-sm dataNewEditBtn" data-id=' + row.category_id + '>编辑</button> ',
-        ' <button type="button" class="btn btn-danger btn-sm dataNewDelBtn" data-id=' +row.category_id + '>删除</button>',
+        '<button type="button" class="btn btn-primary btn-sm dataEditBtn" data-id=' + row.category_id + '>编辑</button> ',
+        ' <button type="button" class="btn btn-danger btn-sm dataDelBtn" data-id=' + row.category_id + '>删除</button>',
     ].join('');
 }
 
 
 
 $(function(){
-    $('body').on('click', '#dataNewBtn', function(){
-        if($('#newDataModal').length > 0){
-            $('#newDataModal').modal('show');
+    $('body').on('click', '#dataAddBtn', function(){
+        if($('#DataModal').length > 0){
+            $('#DataModal').modal('show');
         }
     })
 
-
-    $('body').on('click', '.dataNewEditBtn', function(){
-        var data_id = $(this).data('id') || '';
-        if(data_id){
-
-        }
-
-    })
-
-
-    $('body').on('click', '#dataNewModalCloseBtn', function(){
-        if($('#newDataModal').is(':visible')){
-            $('#newDataModal').modal('hide');
-            $('#newDataForm')[0].reset();
+    $('body').on('click', '#dataModalCloseBtn', function(){
+        if($('#DataModal').is(':visible')){
+            $('#DataModal').modal('hide');
+            $('#DataForm')[0].reset();
         }
     })
 
-    $('body').on('click', '#dataNewModalSubmitBtn', function(){
+    $('body').on('click', '#queryBtn', function(){
+        if($('#DataModal').is(':visible')){
+            $('#DataModal').modal('hide');
+            $('#DataForm')[0].reset();
+        }
+    })
+
+    $('body').on('click', '#dataModalSubmitBtn', function(){
         var url = $(this).data('url') || ''
         if(url){
-            var fd = new FormData(document.getElementById('newDataForm'));
+            var fd = new FormData(document.getElementById('DataForm'));
             $.ajax({
                 url: url,
                 method: 'POST',
@@ -218,15 +255,14 @@ $(function(){
                 success:function(res){
                     layer.alert(res.message)
                     if(res.code == 0){
-                        $('#dataNewModalCloseBtn').click();
+                        $('#dataModalCloseBtn').click();
+                        $('#DataTable').bootstrapTable('refresh');
                     }
                 }
             })
         }
     })
 })
-
-
 </script>
 
 {% endblock %}

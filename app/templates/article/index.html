@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>文章分类管理
+                </h5>
+            </div>
+            <div class="ibox-content p-md">
+                <form class="form-inline" role="form" onsubmit="return false">
+                    <div class="form-group">
+                        <input type="email" placeholder="请输入用户名" id="exampleInputEmail2" class="form-control">
+                        <button name="queryBtn" id="queryBtn" class="btn btn-success" type="button">查询</button>
+                        <button class="btn btn-primary dataAddBtn" type="button"  data-url="{{url_for('article.article_add')}}">新建分类</button>
+                    </div>
+                </form>
+                 <table id="DataTable"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

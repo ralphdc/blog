@@ -44,9 +44,8 @@ def category_index():
 
 
 @category.route('/add', methods=['POST'])
-@category.route('/add/<int:id>', methods=['POST'])
-def category_add(id=None):
-
+def category_add():
+    category_id = request.form.get('category_id')
     category_content = request.form.get('category_content')
     category_status = request.form.get('category_status') or '1'
     category_description = request.form.get('category_description')
@@ -54,11 +53,30 @@ def category_add(id=None):
     if not category_content or not category_status:
         return make_response(jsonify({"code":1, "message": "请填写分类标题！"}))
 
-    if id:
-        pass
-    else:
+    if category_id:
+        #edit
         try:
-            category = Category(category_content=category_content, category_description=category_description, category_creator=current_user.user_name, category_status=category_status)
+            db.session.query(Category).filter(Category.category_id==category_id).update({
+                "category_content": category_content,
+                "category_status": category_status,
+                "category_description": category_description
+            })
+            db.session.commit()
+        except Exception :
+            return make_response(jsonify({"code": 1, "message": "数据更新失败，请联系管理员！"}))
+            db.session.rollback()
+        finally:
+            db.session.close()
+
+        return make_response(jsonify({"code": 0, "message": "更新成功！"}))
+
+    else:
+        #add
+        try:
+            category = Category(category_content=category_content,
+                                category_description=category_description,
+                                category_creator=session['user']['user_id'],
+                                category_status=category_status)
             db.session.add(category)
             db.session.commit()
             return make_response(jsonify({"code": 0, "message": "提交成功"}))
@@ -68,5 +86,48 @@ def category_add(id=None):
 
 
 
+@category.route('/query', methods=['POST'])
+def category_query():
+
+    cid = request.form.get('cid')
+
+    if not cid:
+        return make_response(jsonify({"code":1, "message": "参数传递错误！"}))
+
+    try:
+        cid = int(cid)
+    except Exception:
+        return make_response(jsonify({"code":1, "message": "参数转换错误！请通知管理员！"}))
+
+    cty = db.session.query(Category.category_id, Category.category_content, Category.category_status, Category.category_description).\
+        filter(Category.category_id==cid).first()
+    if cty :
+        title = ('category_id', 'category_content', 'category_status', 'category_description')
+        rows = make_row(title, [ cty ])
+        return make_response(jsonify({"code":0, "data": rows, "message": "查询成功！"}))
+    else:
+        return make_response(jsonify({"code": 1,  "message": "查询失败！"}))
 
 
+@category.route('/delete', methods=['POST'])
+def category_delete():
+
+    cid = request.form.get('cid')
+
+    if not cid:
+        return make_response(jsonify({"code": 1, "message": "参数传递错误！"}))
+
+    try:
+        cid = int(cid)
+    except Exception:
+        return make_response(jsonify({"code":1, "message": "参数转换错误！请通知管理员！"}))
+
+    try:
+        db.session.query(Category).filter(Category.category_id==cid).delete()
+        db.session.commit()
+    except Exception:
+        return make_response(jsonify({"code": 1, "message": "删除失败！请通知管理员！"}))
+    finally:
+        db.session.close()
+
+    return make_response(jsonify({"code": 0, "message": "删除成功！"}))
