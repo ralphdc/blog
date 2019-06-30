@@ -10,6 +10,7 @@ from .models import BoardUser, BoardContent
 from .models import User, UserAndRole, Role, RoleAndModule, Module
 from app.utils import *
 from app import rdx
+from app import csrf
 import json
 
 #递归，获取菜单项目；
@@ -215,6 +216,57 @@ def app_register():
                 flash("{0} - {1}".format(field_name, errors), category='error')
     return render_template('register.html', form=form, error=error)
 
+#屏蔽csrf保护， 否则导致kindeditor上传失败！
+@csrf.exempt
+@app.route('/image_upload', methods=['POST'])
+def app_image_upload():
+
+    import os
+    if not app.config.get('UPLOAD_FILE_PATH'):
+        return make_response(jsonify({"error": 1, "message": "[0]服务器端未能正确设置上传目录，请通知管理员！"}))
+
+    if not os.path.exists(app.config.get('UPLOAD_FILE_PATH')):
+        try:
+            os.makedirs(app.config.get('UPLOAD_FILE_PATH'))
+        except Exception as e:
+            return make_response(jsonify({"error": 1, "message": "[1]服务器端创建目录失败，请通知管理员！"}))
+
+    item_dir = request.args.get('dir').strip() if request.args.get('dir')  else 'image'
+    if not item_dir in app.config.get('UPLOAD_FILE'):
+        return make_response(jsonify({"error": 1, "message": "[2]上传文件类型错误！"}))
+
+    save_path = os.path.join(app.config.get('UPLOAD_FILE_PATH'), item_dir)
+    save_path += '/'
+    if not os.path.exists(save_path):
+        try:
+            os.makedirs(save_path)
+        except Exception as e:
+            return make_response(jsonify({"error": 1, "message": str(e)}))
+    upload_file = request.files.get('imgFile')
+    if upload_file:
+        file_name = upload_file.filename
+        file_length = len(upload_file.read())
+        if not file_name or not file_length or not "." in file_name:
+            return make_response(jsonify({"error": 1, "message": "[3]请检查上传文件的名称和大小！"}))
+
+        if file_length > app.config.get('MAX_CONTENT_LENGTH'):
+            return make_response(jsonify({"error": 1, "message": "[4]上传文件大小超出限制，服务端拒绝接收！"}))
+
+        suffix = file_name.split(".")[-1]
+        if not suffix.lower() in app.config.get('UPLOAD_FILE').get(item_dir):
+            return make_response(jsonify({"error": 1, "message": "[5]上传文件类型错误！"}))
+        saved_file_name = "{}.{}".format(getRandomKey(), suffix)
+        try:
+            #读取后，执行下这个就可以了
+            # 重新定义指针到文件开头
+            upload_file.seek(0)
+            upload_file.save(os.path.join(save_path, saved_file_name))
+        except Exception as e:
+            raise
+            return make_response(jsonify({"error": 1, "message": str(e)}))
+        return make_response(jsonify({"error": 0, "url": "/cdn/{}".format(saved_file_name)}))
+    else:
+        return make_response(jsonify({"error": 1, "message": "[6]服务端未能检测到上传的文件对象，请选择文件！"}))
 
 
 
@@ -267,3 +319,5 @@ def get_reply(id, level):
         html += "</ul>"
 
     return html
+
+

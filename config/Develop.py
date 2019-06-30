@@ -48,3 +48,5 @@ class Develop(Default):
     COOKIE_MAX_AGE = 7 * 24 * 60
 
     IMMUNITY_PATH = ['login', 'static']
+
+    UPLOAD_FILE_PATH = "D:/github/blog/upload/"

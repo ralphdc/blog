@@ -1,17 +1,5 @@
 $(function(){
 
-    var csrftoken = $('meta[name=csrf-token]').attr('content')
-
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-        }
-    })
-
-
-
     $(".dataAddBtn").click(function(){
         var action = $(this).data('url') || '';
         if(action){
@@ -23,4 +11,13 @@ $(function(){
             });
         }
     })
+
+
+    $('.closeLayer').click(function(){
+        var index=parent.layer.getFrameIndex(window.name);
+        //刷新父页面
+        window.parent.location.reload();
+        parent.layer.close(index);
+    })
+
 })

@@ -9,405 +9,151 @@
                 <h5>新建文章</h5>
             </div>
             <div class="ibox-content p-md">
-                <form method="get" class="form-horizontal">
+                <form method="get" class="form-horizontal" onsubmit="return false" id="DataForm">
+                    <input type="hidden" value="{{ csrf_token() }}" />
+                    <input type="hidden" name="posts_id" value="{{ posts[0] }}" />
                         <div class="form-group">
                             <label class="col-sm-2 control-label">文章标题：</label>
-
                             <div class="col-sm-4">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" name="posts_title" value="{{ posts[1] }}" />
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">内容简介：</label>
                             <div class="col-sm-4">
-                                <textarea class="form-control" name="article_description" rows="5"></textarea>
+                                <textarea class="form-control" name="posts_desc" rows="5" >{{ posts[2] }}</textarea>
                                 <span class="help-block m-b-none">输入这篇文章内容概要~</span>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">填写文章内容：</label>
-                            <div class="col-sm-8">
-                                <textarea name="editor1" id="editor1" rows="10" cols="80">
-                                    This is my textarea to be replaced with CKEditor.
+                            <div class="col-sm-10">
+                                <textarea name="posts_content" id="posts_content" rows="20" cols="100" style="width:95%;height:500px;visibility:hidden;">
+                                    {{ posts[3] }}
                                 </textarea>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">提示</label>
-
-                            <div class="col-sm-10">
-                                <input type="text" placeholder="提示信息" class="form-control">
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">禁用</label>
-
-                            <div class="col-sm-10">
-                                <input type="text" disabled="" placeholder="已被禁用" class="form-control">
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">静态控制</label>
-
-                            <div class="col-sm-10">
-                                <p class="form-control-static">i@zi-han.net</p>
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">复选框&amp;单选框 <br>
-                                <small class="text-navy">普通Bootstrap元素</small>
-                            </label>
-
+                            <label class="col-sm-2 control-label">分类</label>
                             <div class="col-sm-10">
                                 <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        选项1
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" checked="" value="option1" id="optionsRadios1" name="optionsRadios">
-                                        选项1
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" value="option2" id="optionsRadios2" name="optionsRadios">
-                                        选项2
-                                    </label>
+                                     {% for cty in category %}
+                                        <label class="checkbox-inline">
+                                        <input type="checkbox" value="{{cty[0]}}" name="posts_category" {% if cty[0] in selected_category %} checked="checked" {% endif %} />
+                                            {{ cty[1] }}
+                                        </label>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">内联复选框</label>
-
+                            <label class="col-sm-2 control-label">是否发布</label>
                             <div class="col-sm-10">
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" value="option1" id="inlineCheckbox1">
-                                    a
+                                <label class="radio-inline">
+                                    <input type="radio" name="posts_status"  value="1"  {% if posts[4] =='1' %} checked {% endif %} /> 是
                                 </label>
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" value="option2" id="inlineCheckbox2">
-                                    b
-                                </label>
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" value="option3" id="inlineCheckbox3">
-                                    c
+                                <label class="radio-inline">
+                                    <input type="radio" name="posts_status"  value="0" {% if posts[4] =='0' %} checked {% endif %}  /> 否
                                 </label>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">复选框&amp;单选框 <br>
-                                <small class="text-navy">自定义样式</small>
-                            </label>
-
+                            <label class="col-sm-2 control-label">是否允许评论</label>
                             <div class="col-sm-10">
-                                <div class="checkbox i-checks">
-                                    <label>
-                                        <div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                        <i></i> 选项1
-                                    </label>
-                                </div>
-                                <div class="checkbox i-checks">
-                                    <label>
-                                        <div class="icheckbox_square-green checked" style="position: relative;"><input type="checkbox" value="" checked="" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                        <i></i> 选项2（选中）
-                                    </label>
-                                </div>
-                                <div class="checkbox i-checks">
-                                    <label>
-                                        <div class="icheckbox_square-green checked disabled" style="position: relative;"><input type="checkbox" value="" disabled="" checked="" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                        <i></i> 选项3（选中并禁用）
-                                    </label>
-                                </div>
-                                <div class="checkbox i-checks">
-                                    <label>
-                                        <div class="icheckbox_square-green disabled" style="position: relative;"><input type="checkbox" value="" disabled="" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                        <i></i> 选项4（禁用）
-                                    </label>
-                                </div>
-                                <div class="radio i-checks">
-                                    <label>
-                                        <div class="iradio_square-green" style="position: relative;"><input type="radio" value="option1" name="a" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                        <i></i> 选项1
-                                    </label>
-                                </div>
-                                <div class="radio i-checks">
-                                    <label>
-                                        <div class="iradio_square-green checked" style="position: relative;"><input type="radio" checked="" value="option2" name="a" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                        <i></i> 选项2（选中）
-                                    </label>
-                                </div>
-                                <div class="radio i-checks">
-                                    <label>
-                                        <div class="iradio_square-green checked disabled" style="position: relative;"><input type="radio" disabled="" checked="" value="option2" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                        <i></i> 选项3（选中并禁用）
-                                    </label>
-                                </div>
-                                <div class="radio i-checks">
-                                    <label>
-                                        <div class="iradio_square-green disabled" style="position: relative;"><input type="radio" disabled="" name="a" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                        <i></i> 选项4（禁用）
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">内联复选框</label>
-
-                            <div class="col-sm-10">
-                                <label class="checkbox-inline i-checks">
-                                    <div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option1" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                    a
+                                <label class="radio-inline">
+                                    <input type="radio" name="posts_allow"  value="1" {% if posts[5] =='1' %} checked {% endif %} /> 是
                                 </label>
-                                <label class="checkbox-inline i-checks">
-                                    <div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option2" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                    b
-                                </label>
-                                <label class="checkbox-inline i-checks">
-                                    <div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="option3" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                                    c
+                                <label class="radio-inline">
+                                    <input type="radio" name="posts_allow"  value="0" {% if posts[5] =='0' %} checked {% endif %} /> 否
                                 </label>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Select</label>
-
-                            <div class="col-sm-10">
-                                <select class="form-control m-b" name="account">
-                                    <option>选项 1</option>
-                                    <option>选项 2</option>
-                                    <option>选项 3</option>
-                                    <option>选项 4</option>
-                                </select>
-
-                                <div class="col-sm-4 m-l-n">
-                                    <select class="form-control" multiple="">
-                                        <option>选项 1</option>
-                                        <option>选项 2</option>
-                                        <option>选项 3</option>
-                                        <option>选项 4</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group has-success">
-                            <label class="col-sm-2 control-label">验证通过</label>
-
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group has-warning">
-                            <label class="col-sm-2 control-label">未填写</label>
-
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group has-error">
-                            <label class="col-sm-2 control-label">验证未通过</label>
-
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control">
+                            <label class="col-sm-2 control-label">阅读密码：</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="posts_password">
+                                <span class="help-block m-b-none">如设置访问密码，则只有正确输入密码后，才允许阅读。</span>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">自定义尺寸</label>
-
+                            <label class="col-sm-2 control-label">置顶操作</label>
                             <div class="col-sm-10">
-                                <input type="text" placeholder=".input-lg" class="form-control input-lg m-b">
-                                <input type="text" placeholder="Default input" class="form-control m-b">
-                                <input type="text" placeholder=".input-sm" class="form-control input-sm">
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">列尺寸</label>
-
-                            <div class="col-sm-10">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <input type="text" placeholder=".col-md-2" class="form-control">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="text" placeholder=".col-md-3" class="form-control">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="text" placeholder=".col-md-4" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">文本框组</label>
-
-                            <div class="col-sm-10">
-                                <div class="input-group m-b"><span class="input-group-addon">@</span>
-                                    <input type="text" placeholder="用户名" class="form-control">
-                                </div>
-                                <div class="input-group m-b">
-                                    <input type="text" class="form-control">
-                                    <span class="input-group-addon">.00</span>
-                                </div>
-                                <div class="input-group m-b"><span class="input-group-addon">¥</span>
-                                    <input type="text" class="form-control">
-                                    <span class="input-group-addon">.00</span>
-                                </div>
-                                <div class="input-group m-b"><span class="input-group-addon"> <input type="checkbox"> </span>
-                                    <input type="text" class="form-control">
-                                </div>
-                                <div class="input-group"><span class="input-group-addon"> <input type="radio"> </span>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">按钮插件</label>
-
-                            <div class="col-sm-10">
-                                <div class="input-group m-b"><span class="input-group-btn">
-                                            <button type="button" class="btn btn-primary">搜</button> </span>
-                                    <input type="text" class="form-control">
-                                </div>
-                                <div class="input-group">
-                                    <input type="text" class="form-control">
-                                    <span class="input-group-btn"> <button type="button" class="btn btn-primary">搜索
-                                        </button> </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">带下拉框</label>
-
-                            <div class="col-sm-10">
-                                <div class="input-group m-b">
-                                    <div class="input-group-btn">
-                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
-                                            操作 <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="form_basic.html#">选项1</a>
-                                            </li>
-                                            <li>
-                                                <a href="form_basic.html#">选项2</a>
-                                            </li>
-                                            <li>
-                                                <a href="form_basic.html#">选项3</a>
-                                            </li>
-                                            <li class="divider"></li>
-                                            <li>
-                                                <a href="form_basic.html#">选项4</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <input type="text" class="form-control">
-                                </div>
-                                <div class="input-group">
-                                    <input type="text" class="form-control">
-
-                                    <div class="input-group-btn">
-                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
-                                            操作 <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu pull-right">
-                                            <li>
-                                                <a href="form_basic.html#">选项1</a>
-                                            </li>
-                                            <li>
-                                                <a href="form_basic.html#">选项2</a>
-                                            </li>
-                                            <li>
-                                                <a href="form_basic.html#">选项3</a>
-                                            </li>
-                                            <li class="divider"></li>
-                                            <li>
-                                                <a href="form_basic.html#">选项4</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">分段</label>
-
-                            <div class="col-sm-10">
-                                <div class="input-group m-b">
-                                    <div class="input-group-btn">
-                                        <button tabindex="-1" class="btn btn-white" type="button">操作</button>
-                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="form_basic.html#">选项1</a>
-                                            </li>
-                                            <li>
-                                                <a href="form_basic.html#">选项2</a>
-                                            </li>
-                                            <li>
-                                                <a href="form_basic.html#">选项3</a>
-                                            </li>
-                                            <li class="divider"></li>
-                                            <li>
-                                                <a href="form_basic.html#">选项4</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <input type="text" class="form-control">
-                                </div>
-                                <div class="input-group">
-                                    <input type="text" class="form-control">
-
-                                    <div class="input-group-btn">
-                                        <button tabindex="-1" class="btn btn-white" type="button">操作</button>
-                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu pull-right">
-                                            分段
-                                        </ul>
-                                    </div>
-                                </div>
+                                <label class="radio-inline">
+                                    <input type="radio" name="posts_top"  value="1" {% if posts[6] =='1' %} checked {% endif %} /> 是
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="posts_top"  value="0" {% if posts[6] =='0' %} checked {% endif %} /> 否
+                                </label>
+                                <span class="help-block m-b-none">多篇文章置顶操作，则按照时间排序，取最晚一篇置顶。</span>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <button class="btn btn-primary" type="submit">保存内容</button>
-                                <button class="btn btn-white" type="submit">取消</button>
+                                <button class="btn btn-primary" id="addPostBtn">保存内容</button>
                             </div>
                         </div>
                     </form>
+                    <p align="center"><button class="btn btn-danger closeLayer">关闭窗口</button></p>
             </div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    CKEDITOR.replace( 'editor1' );
-</script>
 
+    var editor;
+    var editor_content = $('#posts_content').val();
+    KindEditor.ready(function(K) {
+        editor = K.create('#posts_content', {
+            uploadJson : "{{url_for('app_image_upload')}}",
+            fileManagerJson : '../jsp/file_manager_json.jsp',
+            allowFileManager : false
+        });
+
+        if(editor_content)
+        {
+            K.sync('#posts_content');
+        }
+    });
+
+
+    $('#addPostBtn').click(function(){
+        KindEditor.sync('#posts_content');
+        var fd = new FormData(document.getElementById('DataForm'));
+        var category = []
+        var checkbox = $("#DataForm").find("input[name=posts_category]:checked").each(function(k,v){
+            category.push($(this).val())
+        })
+        if(category){
+            fd.append('posts_real_category', category);
+        }
+
+        $.ajax({
+            url: '{{url_for('article.article_add')}}',
+            method: 'POST',
+            dataType: 'json',
+            cache: false,                      // 不缓存
+            processData: false,                // jQuery不要去处理发送的数据
+            contentType: false,                // jQuery不要去设置Content-Type请求头
+            data: fd,
+            success:function(res){
+                if(res.code == 0){
+                    var index=parent.layer.getFrameIndex(window.name);
+                    window.parent.location.reload();
+                    parent.layer.close(index);
+                }
+            }
+        })
+
+    })
+</script>
 {% endblock %}
 

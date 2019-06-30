@@ -34,3 +34,5 @@ class Product(Default):
     REDIS_DB = 1
 
     BOARD_COMMENT_TIME_LIMIT = 3
+
+    UPLOAD_FILE_PATH = ""

@@ -30,3 +30,15 @@ class Default():
     PAGE_LIMIT = 20
 
     PAGE_OFFSET = 1
+
+    #限制上传文件大小为10M;
+    MAX_CONTENT_LENGTH = 1 * 1024 * 1024 * 10
+
+    #限制上传文件后缀；
+    UPLOAD_FILE = {
+        'image' :   ['gif', 'jpg', 'jpeg', 'png', 'bmp'],
+        'flash' :   ['swf', 'flv'],
+        'media' :   ['swf', 'flv', 'mp3', 'wav', 'wma', 'wmv', 'mid', 'avi', 'mpg', 'asf', 'rm', 'rmvb'],
+        'file'  :   [ 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'htm', 'html', 'txt', 'zip', 'rar', 'gz', 'bz2']
+    }
+

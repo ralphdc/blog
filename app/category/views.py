@@ -25,13 +25,13 @@ def category_index():
         offset = int(offset)
 
         qy = db.session.query(Category.category_id,Category.category_content, Category.category_creator, Category.category_status, Category.created_at, User.user_name) \
-            .outerjoin(User, User.user_id==Category.category_creator)
+            .outerjoin(User, User.user_id==Category.category_creator) \
+            .filter(User.user_name==session['user']['user_name'])
         if category_name:
             qy = qy.filter(Category.user_name == category_name)
         count = db.session.query(func.count(Category.category_id)).scalar()
-        qy = qy.limit(limit).offset((offset - 1) * limit)
+        qy = qy.limit(limit).offset(offset)
         qy = qy.all()
-
         if qy:
             title = ('category_id','category_content', 'category_creator', 'category_status', 'created_at', 'user_name')
             rows = make_row(title, qy)

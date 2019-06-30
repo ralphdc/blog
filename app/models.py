@@ -256,7 +256,7 @@ class RoleAndModule(db.Model):
         self.module_id = module_id
 
 
-
+'''
 class Article(db.Model):
     __tablename__ = 'bg_article'
 
@@ -314,6 +314,30 @@ class Article(db.Model):
         return check_password_hash(self.article_password, pwd)
 
 
+class ArticleCategoryMap(db.Model):
+    __tablename__ = 'bg_article_category_map'
+
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8',
+        'mysql_collate': 'utf8_unicode_ci'
+    }
+
+    map_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    article_id = db.Column(db.Integer, nullable=False)
+    category_id = db.Column(db.Integer, nullable=False)
+
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+    
+    
+    def __init__(self, **kwargs):
+        self.article_id = kwargs.get('article_id')
+        self.category_id = kwargs.get('category_id')
+        
+'''
+
+
 class Category(db.Model):
     __tablename__ = 'bg_category'
 
@@ -342,8 +366,11 @@ class Category(db.Model):
             raise Exception("[Error]- Please check category_content and category_creator!")
 
 
-class ArticleCategoryMap(db.Model):
-    __tablename__ = 'bg_article_category_map'
+
+
+
+class Posts(db.Model):
+    __tablename__ = 'bg_posts'
 
     __table_args__ = {
         'mysql_engine': 'InnoDB',
@@ -351,10 +378,45 @@ class ArticleCategoryMap(db.Model):
         'mysql_collate': 'utf8_unicode_ci'
     }
 
-    map_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
-    article_id = db.Column(db.Integer, nullable=False)
-    category_id = db.Column(db.Integer, nullable=False)
+    posts_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    posts_title = db.Column(db.String(255), nullable=False)
+    posts_desc = db.Column(db.String(2048), nullable=False)
+    posts_content = db.Column(db.Text, nullable=False)
+    posts_status = db.Column(db.CHAR(1), nullable=False, server_default='1')
+    posts_password = db.Column(db.String(255), nullable=True)
+    posts_top = db.Column(db.CHAR(1), nullable=False, server_default='1')
+    posts_allow = db.Column(db.CHAR(1), nullable=False, server_default='1')
+    posts_creator = db.Column(db.String(255), nullable=False)
+    posts_comment = db.Column(db.Integer, nullable=True)
+    posts_visit = db.Column(db.Integer, nullable=True)
+    posts_category = db.Column(db.String(1024), nullable=True)
 
     created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
 
+    @property
+    def password(self):
+        raise AttributeError('Password is not a readable attribute')
+
+    @password.setter
+    def password(self, pwd):
+        self.posts_password = generate_password_hash(pwd)
+
+    def set_password(self, password):
+        self.posts_password = generate_password_hash(password)
+
+    def check_password(self, pwd):
+        return check_password_hash(self.posts_password, pwd)
+
+
+    def __init__(self, **kwargs):
+        self.posts_title = kwargs.get('posts_title')
+        self.posts_desc = kwargs.get('posts_desc')
+        self.posts_content = kwargs.get('posts_content')
+        self.posts_status = kwargs.get('posts_status')
+        self.posts_top = kwargs.get('posts_top')
+        self.posts_allow = kwargs.get('posts_allow')
+        self.posts_creator = kwargs.get('posts_creator')
+        self.posts_comment = kwargs.get('posts_comment') or 1
+        self.posts_visit = kwargs.get('posts_visit') or 1
+        self.posts_category = kwargs.get('posts_category')
