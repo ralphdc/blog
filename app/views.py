@@ -12,6 +12,25 @@ from app.utils import *
 from app import rdx
 from app import csrf
 import json
+import functools
+
+
+def login_required(func):
+    @functools.wraps(func)
+    def decorator(*args, **kwargs):
+        ukey = None
+        if session.get('user'):
+            ukey = session.get('user').get('ukey')
+        if not ukey:
+            ukey = request.cookies.get('ukey')
+        if not ukey or not redis_get(ukey):
+            if request.is_xhr:
+                return make_response(jsonify({"code": 1, "message": "请重新登录！"}))
+            else:
+                return redirect(url_for('app_login'))
+        return func(*args, **kwargs)
+    return decorator
+
 
 #递归，获取菜单项目；
 def get_user_menu(mid=0, level=1):
@@ -57,34 +76,6 @@ def get_user_menu(mid=0, level=1):
 
 @app.before_request
 def before_request():
-    FILTER = True
-    paths = request.path.split('/')
-    if paths:
-        for path in paths:
-            if path in app.config.get('IMMUNITY_PATH'):
-                FILTER = None
-                break
-    if FILTER:
-        ukey = None
-        if session.get('user'):
-            ukey = session.get('user').get('ukey')
-        if not ukey:
-            ukey = request.cookies.get('ukey')
-        if not ukey or not redis_get(ukey):
-            if request.is_xhr:
-                return make_response(jsonify({"code": 1, "message": "请重新登录！"}))
-            else:
-                return redirect(url_for('app_login'))
-
-        if not session.get('user'):
-            user_info = json.loads(redis_get(ukey))
-            if not user_info:
-                return make_response(jsonify({"code": 1, "message": "请重新登录！"}))
-            session['user'] = dict()
-            session['user']['ukey'] = ukey
-            session['user']['user_name'] = user_info.get('user_name')
-            session['user']['user_id'] = user_info.get('user_id')
-            session['user']['user_email'] = user_info.get('user_email')
 
     if not session.get('title'):
         session['title'] = app.config.get('BLOG_TITLE')
@@ -100,7 +91,9 @@ def before_request():
 def app_index():
     return render_template('index.html', navigate_active='index')
 
+
 @app.route('/admin')
+@login_required
 def app_admin():
     #获取当前用户权限-菜单；
     user_menu = get_user_menu()
@@ -155,6 +148,7 @@ def app_login():
         session['user']['user_name'] = user_name
         session['user']['user_id'] = user_id
         session['user']['user_email'] = user_email
+        session.permanent = True
         uvalue = {'user_name': user_name, 'user_id':user_id, 'user_email': user_email}
         redis_set(ukey, json.dumps(uvalue))
         next_page = request.args.get('next')

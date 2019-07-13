@@ -358,7 +358,7 @@ function deleteNode(treeId, nodeId){
         btn: ['确定','取消'], //按钮
     shade: false //不显示遮罩
     }, function(){
-        $.post("{{ url_for('auth.auth_delete_node') }}", {'nid': nodeId}, function(res){
+        $.post("{{ url_for('admin.auth_delete_node') }}", {'nid': nodeId}, function(res){
             if(res.code == 0){
                 var treeObj = $.fn.zTree.getZTreeObj(treeId);
                 treeObj.reAsyncChildNodes(null, "refresh");
@@ -390,7 +390,7 @@ $('#modelSubmit').click(function(){
 
     var fd = new FormData(document.getElementById('dataForm'));
      $.ajax({
-                url: '{{ url_for('auth.auth_tree_create') }}',
+                url: '{{ url_for('admin.auth_tree_create') }}',
                 type: 'POST',
                 data: fd,                    // 上传formdata封装的数据
                 dataType: 'JSON',

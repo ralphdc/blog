@@ -147,13 +147,13 @@ class BoardContent(db.Model):
     board_content_body = db.Column(db.Text, nullable=False)
     board_content_type = db.Column(db.CHAR(1), nullable=False, server_default='1')
     board_content_target = db.Column(db.Integer, nullable=True)
-    board_content_status = db.Column(db.CHAR(1), nullable=False, server_default='1')
+    board_content_status = db.Column(db.CHAR(1), nullable=False, server_default='0')
 
     created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
 
 
-    def __init__(self, uid, body, type, target=None, status='1'):
+    def __init__(self, uid, body, type, target=None, status='0'):
 
         self.board_content_uid      = uid
         self.board_content_body     = body
@@ -420,3 +420,67 @@ class Posts(db.Model):
         self.posts_comment = kwargs.get('posts_comment') or 1
         self.posts_visit = kwargs.get('posts_visit') or 1
         self.posts_category = kwargs.get('posts_category')
+
+
+class Album(db.Model):
+
+    __tablename__ = 'bg_album'
+
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8',
+        'mysql_collate': 'utf8_unicode_ci'
+    }
+
+    album_id = db.Column(db.Integer(), primary_key=True, autoincrement=True, unique=True)
+    album_name = db.Column(db.String(255), nullable=False)
+    album_status = db.Column(db.CHAR(1), nullable=False, server_default='1')
+    album_desc = db.Column(db.String(1024), nullable=True)
+    album_creator = db.Column(db.String(255), nullable=True)
+    album_slt = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+    def __init__(self, **kwargs):
+        self.album_name = kwargs.get('album_name')
+        self.album_status= kwargs.get('album_status') or '1'
+        self.desc = kwargs.get('album_desc')
+        self.album_creator = kwargs.get('creator') or 'admin'
+        self.album_slt = kwargs.get('album_slt') or ''
+
+
+class Photo(db.Model):
+    __tablename__ = 'bg_photo'
+
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8',
+        'mysql_collate': 'utf8_unicode_ci'
+    }
+
+    photo_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    photo_name = db.Column(db.String(255), nullable=False)
+    photo_upload_name = db.Column(db.String(255), nullable=False)
+    phone_space = db.Column(db.String(255), nullable=True)
+    photo_path = db.Column(db.String(255), nullable=False)
+    photo_creator = db.Column(db.String(255), nullable=False)
+    photo_status =  db.Column(db.CHAR(1), nullable=False, server_default='1')
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+class AlbumPhotoMap(db.Model):
+    __tablename__ = 'bg_photomap'
+
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8',
+        'mysql_collate': 'utf8_unicode_ci'
+    }
+
+    map_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    album_id = db.Column(db.Integer, nullable=False)
+    photo_id = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())

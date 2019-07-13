@@ -4,7 +4,7 @@ from  flask import render_template, make_response, request, jsonify, session
 from app import app, db
 from app.models import User, UserAndRole, Role, RoleAndModule, Module
 from sqlalchemy import and_, func
-from . import auth
+from . import admin
 
 
 
@@ -39,17 +39,13 @@ class getTreeInterface():
 
 
 
-
-
-
-
-@auth.route('/auth/module', methods=['GET'])
+@admin.route('/auth/module', methods=['GET'])
 def auth_module():
 
     return render_template('auth/module/index.html')
 
 
-@auth.route('/auth/tree', methods=['POST'])
+@admin.route('/auth/tree', methods=['POST'])
 def auth_tree():
 
     nodes = getTreeInterface()
@@ -59,7 +55,7 @@ def auth_tree():
     return make_response(jsonify(treeNodes))
 
 
-@auth.route('/auth/tree/create', methods=['POST'])
+@admin.route('/auth/tree/create', methods=['POST'])
 def auth_tree_create():
 
     module_id = request.form.get('module_id')
@@ -120,7 +116,7 @@ def auth_tree_create():
     return make_response(jsonify({"code": 0, "message": "操作成功！"}))
 
 
-@auth.route('/auth/delete', methods=['GET', 'POST'])
+@admin.route('/auth/delete', methods=['GET', 'POST'])
 def auth_delete_node():
 
     nid = request.form.get('nid')
@@ -144,7 +140,7 @@ def auth_delete_node():
         db.session.close()
 
 
-@auth.route('/auth/query/<int:nid>', methods=['GET'])
+@admin.route('/auth/query/<int:nid>', methods=['GET'])
 def auth_query(nid):
 
     if not nid:

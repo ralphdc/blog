@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from flask import render_template, make_response, jsonify, request, flash, redirect, url_for
-from . import msgboard
+from . import blog
 from app.forms import MsgBoardForm
 from app import app,db
 from sqlalchemy import and_
@@ -13,7 +13,7 @@ tz = pytz.timezone("Asia/Shanghai")
 
 
 
-@msgboard.route('/', methods=['GET', 'POST'])
+@blog.route('/msgboard', methods=['GET', 'POST'])
 def msgboard_index():
 
     form  = MsgBoardForm()
@@ -37,7 +37,7 @@ def msgboard_index():
                 #5分钟内不允许重复留言；
                 if interval < app.config.get('BOARD_COMMENT_TIME_LIMIT'):
                     flash("您的留言评论过于频繁，请{}分钟后再试！".format(app.config.get('BOARD_COMMENT_TIME_LIMIT')))
-                    return redirect(url_for('msgboard.msgboard_index'))
+                    return redirect(url_for('blog.msgboard_index'))
         else:
             try:
                 board_user = BoardUser(nickname, email, blog, ip)
@@ -55,8 +55,8 @@ def msgboard_index():
                 board_content = BoardContent(uid, content, comment_type, comment_target)
                 db.session.add(board_content)
                 db.session.commit()
-                flash('留言已成功提交！')
-                return redirect(url_for('msgboard_index.msgboard_index'))
+                flash('留言已成功提交,请等待审核！')
+                return redirect(url_for('blog.msgboard_index'))
             except Exception as e:
                 app.logger.exception(e)
                 db.session.rollback()
@@ -87,6 +87,6 @@ def msgboard_index():
 
 
     boards = pagination.items
-    return render_template('msgboard/index.html', navigate_active='msgboard', form=form, paginate=pagination, boards=boards, endpoint='msgboard.msgboard_index')
+    return render_template('msgboard/index.html', navigate_active='msgboard', form=form, paginate=pagination, boards=boards, endpoint='blog.msgboard_index')
 
 

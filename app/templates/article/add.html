@@ -137,7 +137,7 @@
         }
 
         $.ajax({
-            url: '{{url_for('article.article_add')}}',
+            url: '{{url_for('admin.article_add')}}',
             method: 'POST',
             dataType: 'json',
             cache: false,                      // 不缓存
@@ -149,6 +149,8 @@
                     var index=parent.layer.getFrameIndex(window.name);
                     window.parent.location.reload();
                     parent.layer.close(index);
+                }else{
+                    layer.alert(res.message)
                 }
             }
         })

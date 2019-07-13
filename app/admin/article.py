@@ -2,15 +2,15 @@
 
 from flask import request, render_template, jsonify, session, make_response
 
-from app.models import Category, User, Posts, ArticleCategoryMap
-from app import db, app
+from app.models import Category, User, Posts
+from app import db, app, login_required
 from app.utils import *
-from . import article
+from . import admin
 from sqlalchemy import and_, func
 
 
-
-@article.route('/', methods=['POST', 'GET'])
+@login_required
+@admin.route('/article', methods=['POST', 'GET'])
 def article_index():
 
     if request.method == 'POST':
@@ -47,9 +47,9 @@ def article_index():
     return render_template('article/index.html')
 
 
-
-@article.route('/add', methods=['POST', 'GET'])
-@article.route('/add/<int:pid>', methods=['GET'])
+@login_required
+@admin.route('/article/add', methods=['POST', 'GET'])
+@admin.route('/article/add/<int:pid>', methods=['GET'])
 def article_add(pid=None):
     posts = None
     if request.method == 'POST':
@@ -139,8 +139,8 @@ def article_add(pid=None):
         selected_category = [ int(x) for x in posts[7].split(',') ] if posts and posts[7] else []
         return render_template('article/add.html', category=category, posts=posts, selected_category=selected_category )
 
-
-@article.route('/delete', methods=['POST'])
+@login_required
+@admin.route('/article/delete', methods=['POST'])
 def article_delete():
     pid = request.form.get('pid')
     if not pid:

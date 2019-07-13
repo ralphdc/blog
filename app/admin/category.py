@@ -6,10 +6,10 @@ from app.utils import *
 from app import db, app
 from app.models import Category, User
 from sqlalchemy import func
-from . import category
+from . import admin
 
 
-@category.route('/', methods=['GET', 'POST'])
+@admin.route('/category', methods=['GET', 'POST'])
 def category_index():
 
     if request.method == 'POST':
@@ -43,7 +43,7 @@ def category_index():
 
 
 
-@category.route('/add', methods=['POST'])
+@admin.route('/category/add', methods=['POST'])
 def category_add():
     category_id = request.form.get('category_id')
     category_content = request.form.get('category_content')
@@ -86,7 +86,7 @@ def category_add():
 
 
 
-@category.route('/query', methods=['POST'])
+@admin.route('/category/query', methods=['POST'])
 def category_query():
 
     cid = request.form.get('cid')
@@ -109,7 +109,7 @@ def category_query():
         return make_response(jsonify({"code": 1,  "message": "查询失败！"}))
 
 
-@category.route('/delete', methods=['POST'])
+@admin.route('/category/delete', methods=['POST'])
 def category_delete():
 
     cid = request.form.get('cid')

@@ -14,7 +14,7 @@
                     <div class="form-group">
                         <input type="email" placeholder="请输入文章标题" id="article_title_search" class="form-control">
                         <button name="queryBtn" id="queryBtn" class="btn btn-success" type="button">查询</button>
-                        <button class="btn btn-primary dataAddBtn" type="button"  data-url="{{url_for('article.article_add')}}">新建文章</button>
+                        <button class="btn btn-primary dataAddBtn" type="button"  data-url="{{url_for('admin.article_add')}}">新建文章</button>
                     </div>
                 </form>
                  <table id="DataTable"></table>
@@ -34,7 +34,7 @@ window.operateEvents = {
               title: null,
               type: 2,
               area: ['100%', '100%'], //宽高
-              content: '{{ url_for('article.article_add') }}/' + value
+              content: '{{ url_for('admin.article_add') }}/' + value
        });
      },
     'click .dataDelBtn': function (e, value, row, index) {
@@ -43,7 +43,7 @@ window.operateEvents = {
         }, function(){
             $.ajax({
                 method:"POST",
-                url:'{{ url_for('article.article_delete') }}',
+                url:'{{ url_for('admin.article_delete') }}',
                 dataType:"JSON",
                 data:{'pid':value},
                 success:function(response){
@@ -75,7 +75,7 @@ var TableInit = function () {
     //初始化Table
     oTableInit.Init = function () {
         $('#DataTable').bootstrapTable({
-            url: '{{url_for('article.article_index')}}',         //请求后台的URL（*）
+            url: '{{url_for('admin.article_index')}}',         //请求后台的URL（*）
             method: 'post',                      //请求方式（*）
             //toolbar: '#toolbar',                //工具按钮用哪个容器
             striped: true,                      //是否显示行间隔色

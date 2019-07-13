@@ -3,10 +3,10 @@
 from flask import render_template, request, make_response, jsonify
 from app import app
 from app.mongo import mongodb
-from . import setting
+from . import admin
 
 
-@setting.route('/', methods=['GET'])
+@admin.route('/setting', methods=['GET'])
 def basicset_index():
 
     collection = app.config.get('BASICSET_COLLECTION')

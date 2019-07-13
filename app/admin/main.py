@@ -2,13 +2,13 @@
 
 from flask import render_template, request, make_response,jsonify
 from app.models import Visit
-from app import app, db
+from app import app, db, login_required
 import datetime
-from . import main
+from . import admin
 
 
 
-@main.route('/', methods=['GET'])
+@admin.route('/main', methods=['GET'])
 def main_index():
 
     today_date = datetime.date.today()

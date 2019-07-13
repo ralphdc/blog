@@ -8,7 +8,7 @@
 	{% include 'sidebar.html' %}
 
 	<!-- start content -->
-	<div id="content">get_reply
+	<div id="content">
 		<div class="post">
 			<div class="row">
 				<div class="col-sm-12">
@@ -76,7 +76,7 @@
 						{{ message }}
 					</div>
 					{% endfor %}
-                    <form class="form-horizontal m-t" id="commentForm" action="{{ url_for('msgboard.msgboard_index') }}" method="POST">
+                    <form class="form-horizontal m-t" id="commentForm" action="{{ url_for('blog.msgboard_index') }}" method="POST">
 						{{ form.csrf_token() }}
 						{{ form.commentType }}
 						{{ form.commentTarget }}
