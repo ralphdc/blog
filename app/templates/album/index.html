@@ -1,30 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="ibox">
-    <div class="ibox-title">
-        <h5>文章分类管理
-        </h5>
-    </div>
-    <div class="ibox-content p-md">
-        <form class="form-inline" role="form" onsubmit="return false">
-            <div class="form-group">
-                <input type="email" placeholder="请输入用户名" id="exampleInputEmail2" class="form-control">
-                <button name="queryBtn" id="queryBtn" class="btn btn-success" type="button">查询</button>
-                <button class="btn btn-primary" type="button" id="dataAddBtn">新建相册</button>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>相册一览</h5>
             </div>
-        </form>
-        <div style="height:20px"></div>
-        <div class="col-sm-12">
-            <div class="col-sm-2">
-                <div class="album">
-                    <img src="">
-                </div>
+            <div class="ibox-content p-md">
+                <form class="form-inline" role="form" onsubmit="return false">
+                    <div class="form-group">
+                        <input type="email" placeholder="请输入用户名" id="exampleInputEmail2" class="form-control">
+                        <button name="queryBtn" id="queryBtn" class="btn btn-success" type="button">查询</button>
+                        <button class="btn btn-primary" type="button" id="dataAddBtn">新建分类</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
+
+<div class="row">
+    {% for album in albums %}
+     <div class="col-sm-3">
+         <div class="album">
+            <a href="#" class="album_link" data-aid="{{ album[0] }}"><img src="{{ album[2] or url_for('static', filename="images/album.jpg") }}" width="99%"></a>
+         </div>
+         <center><p class="album_title">{{album[1]}}</p></center>
+         <center><p class="album_title"></p></center>
+     </div>
+    {% endfor %}
+</div>
 
 
 <!-- 模态框（Modal） -->
@@ -149,14 +156,24 @@ $(function(){
                     data: fd,
                     success:function(res){
                         layer.alert(res.message)
-                        if(res.code == 0){
-                            $('#dataModalCloseBtn').click();
-                        }
+                        window.location.reload();
                     }
                 })
             }
-        })
+       })
 
+
+       $('.album_link').click(function(){
+            var aid = $(this).data('aid') || '';
+            if (aid){
+                layer.open({
+                    type: 2,
+                    content: '/album/show/' + aid,
+                    area: ['90%', '90%'],
+                    title: '相册管理'
+                })
+            }
+       })
 
 })
 

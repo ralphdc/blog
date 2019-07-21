@@ -470,6 +470,16 @@ class Photo(db.Model):
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
 
 
+    def __init__(self, **kwargs):
+        self.photo_name = kwargs.get('photo_name')
+        self.photo_path = kwargs.get('photo_path')
+        self.photo_upload_name = kwargs.get('photo_upload_name')
+        self.phone_space = kwargs.get('photo_space')
+        self.photo_creator = kwargs.get('photo_creator')
+        self.photo_status = kwargs.get('photo_status') or '1'
+
+
+
 class AlbumPhotoMap(db.Model):
     __tablename__ = 'bg_photomap'
 
@@ -484,3 +494,7 @@ class AlbumPhotoMap(db.Model):
     photo_id = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    def __init__(self, **kwargs):
+        self.album_id = kwargs.get('album_id')
+        self.photo_id = kwargs.get('photo_id')

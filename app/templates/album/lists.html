@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .lightBoxGallery img {
+        margin: 5px;
+        width: 160px;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>{{ album[0] }}</h5>
+            </div>
+            <div class="ibox-content p-md">
+               <div class="row" style="height: 500px">
+                <input  id="file-Portrait1" type="file" multiple class="file-loading" name="imgFile"  />
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content">
+			<div class="row">
+				<div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+						<div class="ibox-content">
+                            <div class="lightBoxGallery">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</div>
+
+<div id="blueimp-gallery" class="blueimp-gallery">
+    <div class="slides"></div>
+    <h3 class="title"></h3>
+    <a class="prev">‹</a>
+    <a class="next">›</a>
+    <a class="close">×</a>
+    <a class="play-pause"></a>
+    <ol class="indicator"></ol>
+</div>
+
+<script type="text/javascript">
+    $("#file-Portrait1").fileinput({
+         theme: "explorer-fa",
+         uploadUrl: '/album/album_upload/{{ album[1] }}',
+         minFileCount: 1,
+         maxFileCount: 5,
+         dropZoneEnabled:true,
+         uploadAsync: true,
+         enctype: 'multipart/form-data',
+         allowedFileExtensions: ['jpg', 'gif', 'png']
+    });
+
+     // 上传成功回调
+    $("#file-Portrait1").on("filebatchuploadcomplete", function() {
+        layer.msg("上传附件成功");
+        window.location.reload();
+    });
+    // 上传失败回调
+    $('#file-Portrait1').on('fileerror', function(event, data, msg) {
+        layer.msg(data.msg);
+        tokenTimeOut(data);
+    });
+
+
+</script>
+{% endblock %}

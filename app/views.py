@@ -155,6 +155,7 @@ def app_login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('app_admin')
         # add login history
+
         try:
             clientIP = request.remote_addr or '0.0.0.0'
             db.session.add(Visit(user_name, clientIP))

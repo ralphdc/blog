@@ -5622,3 +5622,14 @@ body.fixed-sidebar.mini-navbar .navbar-static-side {
 .treeNodeContent{
     padding:10px;
 }
+
+.album{
+   padding:10px;
+   border:1px #676a6c solid;
+   box-shadow: 10px 10px 5px #888888;
+}
+
+.album_title{
+    padding:15px 0;
+    display:block;
+}
