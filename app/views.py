@@ -6,14 +6,14 @@ from sqlalchemy import and_
 from .forms import RegisterForm, LoginForm
 from werkzeug.urls import url_parse
 from .models import Visit
-from .models import BoardUser, BoardContent
+from .models import BoardUser, BoardContent, Posts, Category
 from .models import User, UserAndRole, Role, RoleAndModule, Module
 from app.utils import *
 from app import rdx
 from app import csrf
 import json
 import functools
-
+from .Pagination import Pagination
 
 def login_required(func):
     @functools.wraps(func)
@@ -87,9 +87,6 @@ def before_request():
         session['header'] = app.config.get('BLOG_HEADER')
 
 
-@app.route('/')
-def app_index():
-    return render_template('index.html', navigate_active='index')
 
 
 @app.route('/admin')

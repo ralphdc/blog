@@ -11,9 +11,9 @@
                 <div class="ibox-content p-md">
                     <form class="form-inline" role="form" onsubmit="return false">
                         <div class="form-group">
-                            <input type="email" placeholder="请输入用户名" id="exampleInputEmail2" class="form-control">
+                            <input type="text" placeholder="请输入链接名称" id="link_name" name="link_name" class="form-control">
                             <button name="queryBtn" id="queryBtn" class="btn btn-success" type="button">查询</button>
-                            <button class="btn btn-primary" type="button" id="dataAddBtn">新建分类</button>
+                            <button class="btn btn-primary" type="button" id="dataAddBtn">新建外链</button>
                         </div>
                     </form>
 
@@ -31,46 +31,46 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">新建分类</h4>
+                <h4 class="modal-title" id="myModalLabel">新建外链</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal m-t" id="DataForm" novalidate="novalidate" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">图标：</label>
-                        <div class="col-sm-8">
-                            <input type="file" id="category_image" name="category_image" class="form-control"/>
-                            <span>图片尺寸：220*150</span>
-                            <input type="hidden" id="category_id" name="category_id" />
-                        </div>
-                    </div>
+                <form class="form-horizontal m-t" id="DataForm" novalidate="novalidate">
+                    <input type="hidden" id="edit_id" name="edit_id" />
                      <div class="form-group">
-                        <label class="col-sm-3 control-label">分类名称</label>
+                        <label class="col-sm-3 control-label">链接名称：</label>
                         <div class="col-sm-8">
-                            <input type="text" id="category_content" name="category_content" class="form-control"/>
+                            <input type="text" id="modal_link_name" name="modal_link_name" class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">分类状态：</label>
+                        <label class="col-sm-3 control-label">链接内容：</label>
                         <div class="col-sm-8">
-                           <label class="radio-inline">
-                              <input type="radio" name="category_status" value="1" checked> 有效
-                            </label>
-                            <label class="radio-inline">
-                              <input type="radio" name="category_status" value="0"> 无效
-                            </label>
+                            <input type="text" id="modal_link_href" name="modal_link_href" class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">说明：</label>
                         <div class="col-sm-8">
-                            <textarea id="category_description" name="category_description" class="form-control" required="" aria-required="true"></textarea>
+                            <textarea id="modal_link_desc" name="modal_link_desc" class="form-control" required="" aria-required="true" style="resize:none"></textarea>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label class="col-sm-3 control-label">邮件：</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="modal_link_email" name="modal_link_email" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">手机：</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="modal_link_mobile" name="modal_link_mobile" class="form-control"/>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" id="dataModalCloseBtn">关闭</button>
-                <button type="button" class="btn btn-primary" data-url="{{ url_for('admin.category_add') }}" id="dataModalSubmitBtn">提交更改</button>
+                <button type="button" class="btn btn-primary" data-url="{{ url_for('admin.link_add') }}" id="dataModalSubmitBtn">提交更改</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
@@ -88,10 +88,7 @@ window.operateEvents = {
                 data:{'cid':value},
                 success:function(response){
                     if(response.code == 0){
-                        $('#category_content').val(response.data[0].category_content);
-                        $("input:radio[name=category_status][value="+ response.data[0].category_status + "]").attr("checked",true);
-                        $('#category_description').val(response.data[0].category_description);
-                        $('#category_id').val(response.data[0].category_id);
+
                         $('#DataModal').modal('show');
                     }
                 }
@@ -130,7 +127,7 @@ var TableInit = function () {
     //初始化Table
     oTableInit.Init = function () {
         $('#DataTable').bootstrapTable({
-            url: '{{url_for('admin.category_index')}}',         //请求后台的URL（*）
+            url: '{{url_for('admin.link_index')}}',         //请求后台的URL（*）
             method: 'post',                      //请求方式（*）
             //toolbar: '#toolbar',                //工具按钮用哪个容器
             striped: true,                      //是否显示行间隔色
@@ -165,27 +162,26 @@ var TableInit = function () {
                         }
                 },
                 {
-                    field: 'category_content',
-                    title: '分类名称'
+                    field: 'link_name',
+                    title: '链接名称'
                 }, {
-                    field: 'user_name',
-                    title: '创建者'
+                    field: 'link_href',
+                    title: '链接内容'
                 }, {
-                    field: 'category_status',
-                    title: '状态',
-                    formatter:function(value, row, index){
-                        if(value==1){
-                            return '<p><span class="badge badge-primary">有效</span></p>'
-                        }else{
-                            return '<p><span class="badge badge-primary">无效</span></p>'
-                        }
-                    }
+                    field: 'link_desc',
+                    title: '链接描述'
+                },{
+                    field: 'link_email',
+                    title: '邮箱'
+                },{
+                    field: 'link_mobile',
+                    title: '手机号'
                 },{
                     field: 'created_at',
                     title: '创建时间'
                 },
                 {
-                    field: 'category_id',
+                    field: 'link_id',
                     title: '操作',
                     events: 'operateEvents',
                     formatter: operateFormatter //自定义方法，添加操作按钮
@@ -209,7 +205,7 @@ var TableInit = function () {
     oTableInit.queryParams = function (params) {
         var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
             limit: params.limit,   //页面大小
-            offset:params.offset || 1
+            offset:params.offset || 0
         };
         return temp;
     };

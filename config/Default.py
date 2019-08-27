@@ -42,3 +42,5 @@ class Default():
         'file'  :   [ 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'htm', 'html', 'txt', 'zip', 'rar', 'gz', 'bz2']
     }
 
+
+    BLOG_PAGE_SIZE = 5

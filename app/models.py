@@ -352,7 +352,7 @@ class Category(db.Model):
     category_description = db.Column(db.String(1024), nullable=True)
     category_creator = db.Column(db.String(255), nullable=False)
     category_status = db.Column(db.CHAR(1), nullable=True, server_default='1')
-
+    category_image = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
 
@@ -361,6 +361,7 @@ class Category(db.Model):
         self.category_description = kwargs.get('category_description')
         self.category_creator = kwargs.get('category_creator')
         self.category_status = kwargs.get('category_status') or '1'
+        self.category_image = kwargs.get('category_image') or ''
 
         if not self.category_content or not self.category_creator:
             raise Exception("[Error]- Please check category_content and category_creator!")
@@ -390,6 +391,7 @@ class Posts(db.Model):
     posts_comment = db.Column(db.Integer, nullable=True)
     posts_visit = db.Column(db.Integer, nullable=True)
     posts_category = db.Column(db.String(1024), nullable=True)
+    posts_tag = db.Column(db.String(1024), nullable=True)
 
     created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
@@ -420,7 +422,7 @@ class Posts(db.Model):
         self.posts_comment = kwargs.get('posts_comment') or 1
         self.posts_visit = kwargs.get('posts_visit') or 1
         self.posts_category = kwargs.get('posts_category')
-
+        self.posts_tag = kwargs.get('posts_tag')
 
 class Album(db.Model):
 
@@ -498,3 +500,65 @@ class AlbumPhotoMap(db.Model):
     def __init__(self, **kwargs):
         self.album_id = kwargs.get('album_id')
         self.photo_id = kwargs.get('photo_id')
+
+
+
+class OuterLink(db.Model):
+
+    __tablename__ = 'bg_link'
+
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8',
+        'mysql_collate': 'utf8_unicode_ci'
+    }
+
+    link_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    link_name = db.Column(db.String(255), nullable=False)
+    link_desc = db.Column(db.String(255), nullable=False)
+    link_href = db.Column(db.String(255), nullable=False)
+    link_email = db.Column(db.String(255), nullable=False)
+    link_mobile = db.Column(db.String(255), nullable=False)
+    link_status = db.Column(db.CHAR(1), nullable=False, server_default='1')
+
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    def __init__(self, **kwargs):
+
+        self.link_name = kwargs.get('link_name')
+        self.link_desc = kwargs.get('link_desc')
+        self.link_href = kwargs.get('link_href')
+        self.link_email = kwargs.get('link_email')
+        self.link_mobile = kwargs.get('link_mobile')
+        self.link_status = kwargs.get('link_status') or '1'
+
+
+class Comments(db.Model):
+    __tablename__ = 'bg_comment'
+
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8',
+        'mysql_collate': 'utf8_unicode_ci'
+    }
+
+    comment_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    comment_post_id = db.Column(db.Integer, nullable=False)
+    comment_nickname = db.Column(db.String(255), nullable=False)
+    comment_site = db.Column(db.String(255), nullable=True)
+    comment_body = db.Column(db.String(2048), nullable=False)
+    comment_status = db.Column(db.CHAR(1), nullable=False, server_default='0')
+    comment_ip = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
+
+    def __init__(self, **kwargs):
+
+        self.comment_post_id=kwargs.get('comment_post_id')
+        self.comment_nickname = kwargs.get('comment_nickname')
+        self.site = kwargs.get('site')
+        self.comment_body = kwargs.get('comment_body')
+        self.comment_status = kwargs.get('comment_status')  or '0'
+        self.comment_ip = kwargs.get('comment_ip') or ''
+
+

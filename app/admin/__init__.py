@@ -19,3 +19,5 @@ from . import category
 from . import comment
 
 from . import album
+
+from . import link

@@ -1,59 +1,43 @@
 {% extends 'blog.html' %}
 
 {% block content %}
-
-<!-- start page -->
-<div id="page">
-
-	{% include 'sidebar.html' %}
-
-	<!-- start content -->
-	<div id="content">
-		<div class="post">
-			<div class="title">
-				<h2><a href="#">About this Template</a></h2>
-				<p><small>Posted on August 20th, 2007 by <a href="#">Free CSS Templates</a></small></p>
-			</div>
-			<div class="entry">
-				<p>This is <strong>Exposure</strong>, a free, fully standards-compliant CSS template designed by <a href="http://www.51qianduan.com//">Free CSS Templates</a>. This free template is released under a <a href="http://creativecommons.org/licenses/by/2.5/">Creative Commons Attributions 2.5</a> license, so you're pretty much free to do whatever you want with it (even use it commercially) provided you keep the links in the footer intact. Aside from that, have fun with it :)</p>
-				<p>This template is also available as a <a href="http://www.51qianduan.com//preview/exposure">WordPress theme</a> at <a href="http://www.51qianduan.com//">Free WordPress Themes</a>.</p>
-			</div>
-			<p class="links"><a href="#" class="more">Read More</a> <a href="#" class="comments">No Comments</a></p>
-		</div>
-		<div class="post">
-			<div class="title">
-				<h2><a href="#">Etiam rhoncus volutpat</a></h2>
-				<p><small>Posted on August 20th, 2007 by <a href="#">Free CSS Templates</a></small></p>
-			</div>
-			<div class="entry">
-				<p>Maecenas pede nisl, elementum eu, ornare ac, malesuada at, erat. Proin gravida orci porttitor enim accumsan lacinia. Donec condimentum, urna non molestie semper, ligula enim ornare nibh, quis laoreet eros quam eget ante. Aliquam libero. Vivamus nisl nibh, iaculis vitae, viverra sit amet, ullamcorper vitae, turpis. Aliquam erat volutpat. Vestibulum dui sem, pulvinar sed, imperdiet nec, iaculis nec, leo. Fusce odio. </p>
-				<p>Etiam arcu dui, faucibus eget, placerat vel, sodales eget, orci. Donec ornare neque ac sem. Mauris aliquet. Aliquam sem leo, vulputate sed, convallis at, ultricies quis, justo. Donec nonummy magna quis risus. Quisque eleifend. Phasellus tempor vehicula justo. Aliquam lacinia metus ut elit. Suspendisse iaculis mauris nec lorem.<br />
+<div class="content">
+	<p><img src="{{ url_for('static', filename='images/coffee.png') }}"></p>
+	<article class="excerpt-minic excerpt-minic-index">
+		<h2><span class="red">【推荐】</span><a target="_blank" href="#" title="用DTcms做一个独立博客网站（响应式模板）" draggable="false">用DTcms做一个独立博客网站（响应式模板）</a>
+		</h2>
+		<p class="note">用DTcms做一个独立博客网站（响应式模板），采用DTcms V4.0正式版（MSSQL）。开发环境：SQL2008R2+VS2010。DTcms V4.0正式版功能修复和优化：1、favicon.ico图标后台上传。（解决要换图标时要连FTP或者开服务器的麻烦）</p>
+	</article>
+	 {% if qy %}
+        {% for q in qy %}
+			<article class="excerpt excerpt-1" style="">
+				<a class="focus" href="/article/{{ q[0] }}" title="{{ q[1] }}" target="_blank" >
+					<img class="thumb" data-original="{{ url_for('static', filename='images/article_tag.png')}}" src="{{ q[4] }}" alt="{{ q[5] }}"  style="display: inline;">
+				</a>
+				<header><a class="cat" href="#" title="{{ q[5] }}" >{{ q[5] }}<i></i></a>
+					<h2><a href="/article/{{ q[0] }}" title="{{ q[1] }}" target="_blank" >{{ q[1] }}</a>
+					</h2>
+				</header>
+				<p class="meta">
+					<time class="time"><i class="glyphicon glyphicon-time"></i>{{ q[3] }}</time>
+					<span class="views"><i class="glyphicon glyphicon-eye-open"></i> 216</span> <a class="comment" href="##comment" title="评论" target="_blank" ><i class="glyphicon glyphicon-comment"></i> 4</a>
 				</p>
-			</div>
-			<p class="links"> <a href="#" class="more">Read More</a> <a href="#" class="comments">No Comments</a> </p>
-		</div>
-		<div class="post">
-			<div class="title">
-				<h2><a href="#">Praesent  condimentum</a></h2>
-				<p><small>Posted on August 20th, 2007 by <a href="#">Free CSS Templates</a></small></p>
-			</div>
-			<div class="entry">
-				<p>Etiam arcu dui, faucibus eget, placerat vel, sodales eget, orci. Donec ornare neque ac sem. Mauris aliquet. Aliquam sem leo, vulputate sed, convallis at, ultricies quis, justo. Donec nonummy magna quis risus. Quisque eleifend. Phasellus tempor vehicula justo. Aliquam lacinia metus ut elit. Suspendisse iaculis mauris nec lorem.</p>
-				<ol>
-					<li><a href="#">Integer sit amet pede vel arcu aliquet pretium.</a></li>
-					<li><a href="#">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</a></li>
-					<li><a href="#">Phasellus nec erat sit amet nibh pellentesque congue.</a></li>
-					<li><a href="#">Pellentesque quis elit non lectus gravida blandit. <br />
-					</a></li>
-				</ol>
-			</div>
-			<p class="links"><a href="#" class="more">Read More</a> <a href="#" class="comments">No Comments</a> </p>
-		</div>
-		<br style="clear: both;" />
-	</div>
-	<!-- end content -->
-	<br style="clear: both;" />
+				<p class="note">
+					{{ q[2] }}
+				</p>
+			</article>
+        {% endfor %}
+		<center>
+			<nav aria-label="navigation">
+				<ul class="pagination">
+				{{ html|safe }}
+				</ul>
+			</nav>
+		</center>
+	{% else %}
+        <div class="page-header">
+          <h1>欢迎光临我的博客！<small>服务清理中，近期未发布文章！</small></h1>
+        </div>
+	{% endif %}
 </div>
-<!-- end page -->
-
 {% endblock %}

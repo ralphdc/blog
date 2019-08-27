@@ -19,6 +19,9 @@ class Develop(Default):
 
     SQLALCHEMY_MAX_OVERFLOW = 2000
 
+    #打印SQL, 用于调试；
+    #SQLALCHEMY_ECHO = True
+
     MONGO_DATABASE_URI = "mongodb://blog:Blog1234@127.0.0.1:27017/"
 
     MONGO_HOST = '127.0.0.1'
@@ -50,3 +53,4 @@ class Develop(Default):
     IMMUNITY_PATH = ['login', 'static']
 
     UPLOAD_FILE_PATH = "D:/github/blog/upload/"
+
