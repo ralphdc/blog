@@ -18,7 +18,7 @@ csrf = CsrfProtect(app)
 @csrf.error_handler
 def csrf_error(reason):
     if request.is_xhr:
-        return make_response(jsonify({"code": 1, "message":"[Error] csrf token error!"}))
+        return make_response(jsonify({"code": 1, "message":"[Error] csrf token error!>>>>>>>>>>"}))
     return render_template('csrf_error.html', reason=reason), 400
 
 

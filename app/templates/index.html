@@ -3,11 +3,17 @@
 {% block content %}
 <div class="content">
 	<p><img src="{{ url_for('static', filename='images/coffee.png') }}"></p>
+	{% if recommend %}
 	<article class="excerpt-minic excerpt-minic-index">
-		<h2><span class="red">【推荐】</span><a target="_blank" href="#" title="用DTcms做一个独立博客网站（响应式模板）" draggable="false">用DTcms做一个独立博客网站（响应式模板）</a>
+		<h2><span class="red">【推荐】</span>
+			<a target="_blank" href="/article/{{ recommend[4] or recommend[0]  }}" title="{{ recommend[1] }}" draggable="false">{{ recommend[1] }}</a>
 		</h2>
-		<p class="note">用DTcms做一个独立博客网站（响应式模板），采用DTcms V4.0正式版（MSSQL）。开发环境：SQL2008R2+VS2010。DTcms V4.0正式版功能修复和优化：1、favicon.ico图标后台上传。（解决要换图标时要连FTP或者开服务器的麻烦）</p>
+		<p class="note">
+			{{ recommend[2] }}
+		</p>
 	</article>
+	{% endif %}
+
 	 {% if qy %}
         {% for q in qy %}
 			<article class="excerpt excerpt-1" style="">

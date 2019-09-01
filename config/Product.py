@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from .Default import Default
+import pymysql
 
 class Product(Default):
 
@@ -36,3 +37,21 @@ class Product(Default):
     BOARD_COMMENT_TIME_LIMIT = 3
 
     UPLOAD_FILE_PATH = ""
+
+    LOCAL_FILE_PATH = 'D:/github/blog/download'
+
+    MYSQL_HOST = '127.0.0.1'
+
+    MYSQL_PORT = 3306
+
+    MYSQL_USER = 'blog'
+
+    MYSQL_PWD = 'Blog1234'
+
+    MYSQL_DB = 'blog'
+
+    MYSQL_CHARSET = 'utf8'
+
+    MYSQL_CURSOR = pymysql.cursors.DictCursor
+
+

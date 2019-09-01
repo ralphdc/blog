@@ -8,6 +8,7 @@ import os
 import hashlib
 from app import rdx
 from app import app
+import pymysql
 
 def check_login(func):
     @wraps(func)
@@ -51,3 +52,59 @@ def redis_get(key):
 
 def redis_set(key, value, timeout=None):
     rdx.set(key, value, ex=timeout if timeout else app.config.get('REDIS_TIMEOUT'))
+
+
+def get_mysql_config():
+
+    return {
+        'host': app.config.get('MYSQL_HOST'),
+        'port':  app.config.get('MYSQL_PORT'),
+        'user':  app.config.get('MYSQL_USER'),
+        'password':  app.config.get('MYSQL_PWD'),
+        'db':  app.config.get('MYSQL_DB'),
+        'charset':  app.config.get('MYSQL_CHARSET'),
+        'cursorclass': app.config.get('MYSQL_CURSOR')
+    }
+
+def mysql_fetch_one(sql, kvs=None):
+    connection = pymysql.connect(**get_mysql_config())
+    _rtf = 0
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql, kvs)
+            _rtf = cursor.fetchone()
+    except Exception:
+        raise
+    finally:
+        connection.close()
+    return _rtf
+
+def mysql_fetch_all(sql, kvs=None):
+    connection = pymysql.connect(**get_mysql_config())
+    _rtf = 0
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql, kvs)
+            _rtf = cursor.fetchall()
+    except Exception:
+        raise
+    finally:
+        connection.close()
+    return _rtf
+
+
+
+def mysql_execute(sql, kvs):
+    connection = pymysql.connect(**get_mysql_config())
+    _rtf = 0
+    try:
+        with connection.cursor() as cursor:
+            _rtf = cursor.execute(sql,kvs)
+        # 默认不自动提交事务，所以需要手动提交
+        connection.commit()
+    except Exception :
+        raise
+    finally:
+        connection.close()
+
+    return _rtf

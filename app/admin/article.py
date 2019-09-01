@@ -62,7 +62,7 @@ def article_add(pid=None):
         posts_allow = request.form.get('posts_allow')  or '1'
         posts_password = request.form.get('posts_password')
         posts_top = request.form.get('posts_top') or '0'
-        posts_tag = request.form.get('posts_tag') or ''
+        posts_tag = request.form.get('posts_tag') or '' 
         posts_seo = request.form.get('posts_seo') or ''
 
         if not posts_title or not posts_content:

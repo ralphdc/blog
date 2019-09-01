@@ -1,7 +1,7 @@
 {% extends 'blog.html' %}
 
 {% block content %}
-<p style="margin-bottom:15px;"><img src="{{ url_for('static', filename='images/php.png') }}"></p>
+<p style="margin-bottom:15px;"><a href="/"><img src="{{ url_for('static', filename='images/php.png') }}"></a></p>
 <div class="content">
 	<header class="article-header">
 	<h1 class="article-title"><a href="#" title="{{content[1]}}" >{{content[1]}}</a></h1>
@@ -24,11 +24,28 @@
 	<div class="infocard">
 		{{ content[6] }}
 	</div>
+	{% if not content[10] %}
 	<article class="article-content">
 		<div class="posts_content">
 			{{ content[4] | safe }}
 		</div>
     </article>
+
+	{% else %}
+
+	<form class="form-horizontal" style="padding:30px" action="{{check_pwd_path}}" method="POST">
+		<input type="hidden" value="{{csrf_token()}}" name="csrf_token" />
+	  <div class="form-group">
+		<label for="readpwd" class="col-sm-4 control-label">请输入阅读密码：</label>
+		<div class="col-sm-6">
+		  <input type="password" class="form-control" id="readpwd" name="readpwd" placeholder="password">
+		</div>
+		 <div class="col-sm-2">
+			 <button type="submit" class="btn btn-primary">提交</button>
+		 </div>
+	  </div>
+	</form>
+	{% endif %}
 	{% if tags %}
 	<div class="article-tags">
 		标签：
@@ -50,37 +67,32 @@
 		{% endif %}
   </div>
 
-
-
 	<div class="title" id="comment">
 	<h3>评论</h3>
 	</div>
+	{% if comments %}
 	<div id="postcomments">
 	<ol id="comment_list" class="commentlist">
+		{% for comment in comments %}
 		<li class="comment-content">
-			<span class="comment-f">#2</span>
+			<span class="comment-f">#{{loop.index}}</span>
 			<div class="comment-main">
-				<p><a class="address" href="#" rel="nofollow" target="_blank">木庄网络博客</a>
-					<span class="time">(2016/10/28 11:41:03)</span>
-					<br>不错的网站主题，看着相当舒服
+				<p><a class="address" href="#" rel="nofollow" target="_blank">{{comment[0]}}</a>
+					<span class="time">({{comment[2]}})</span>
+					<br>{{comment[1]}}
 				</p>
 			</div>
 		</li>
-		<li class="comment-content">
-			<span class="comment-f">#2</span>
-			<div class="comment-main">
-				<p><a class="address" href="#" rel="nofollow" target="_blank">木庄网络博客</a>
-					<span class="time">(2016/10/28 11:41:03)</span>
-					<br>不错的网站主题，看着相当舒服
-				</p>
-			</div>
-		</li>
+		{% endfor %}
 	</ol>
   </div>
+	{% endif %}
+
   {% if content[13] == '1' %}
   <div id="respond">
-	<form id="comment-form" name="comment-form" action="" method="POST">
+	<form id="comment-form" name="comment-form" onsubmit="return false">
 		<div class="comment">
+			<input type="hidden" name="post_id" value="{{ content[0] }}" id="post_id"/>
 			<input name="nickname" id="nickname" class="form-control" size="22" placeholder="您的昵称（必填）" maxlength="15" autocomplete="off" tabindex="1" type="text">
 			<input name="site" id="site" class="form-control" size="22" placeholder="您的网址或邮箱（非必填）" maxlength="58" autocomplete="off" tabindex="2" type="text">
 			<div class="comment-box">
@@ -95,18 +107,19 @@
 	</form>
   </div>
 	<script src="{{ url_for('static', filename='js/plugins/layer/layer.min.js') }}"></script>
-<script>
-	$('#comment-submit').click(function(){
-		var nickname = $('#nickname').val();
-		var site = $('#site').val();
-		var comment_body = $('#comment-textarea').val();
-		if( nickname && site && comment_body){
-			$.post('{{url_for('app_comment')}}', {'nickname':nickname, 'site':site, 'comment_body':comment_body}, function(res){
-				layer.alert(res.message)
-			})
-		}
-	})
-</script>
+	<script>
+		$('#comment-submit').click(function(){
+			var nickname = $('#nickname').val();
+			var site = $('#site').val();
+			var comment_body = $('#comment-textarea').val();
+			var post_id = $('#post_id').val();
+			if( nickname && site && comment_body && post_id){
+				$.post('{{url_for('app_comment')}}', {'nickname':nickname, 'site':site, 'comment_body':comment_body, 'post_id':post_id}, function(res){
+					layer.alert(res.message)
+				})
+			}
+		})
+	</script>
   {% endif %}
 </div>
 
