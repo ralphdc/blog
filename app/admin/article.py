@@ -63,6 +63,7 @@ def article_add(pid=None):
         posts_password = request.form.get('posts_password')
         posts_top = request.form.get('posts_top') or '0'
         posts_tag = request.form.get('posts_tag') or ''
+        posts_seo = request.form.get('posts_seo') or ''
 
         if not posts_title or not posts_content:
             return make_response(jsonify({"code": 1, "message": "请填写文章标题和内容！"}))
@@ -81,6 +82,7 @@ def article_add(pid=None):
                     update_posts.posts_top = posts_top
                     update_posts.posts_category = posts_category
                     update_posts.posts_tag = posts_tag
+                    update_posts.posts_seo = posts_seo
 
                     if posts_password:
                         update_posts.set_password(posts_password)
@@ -104,7 +106,8 @@ def article_add(pid=None):
                     posts_top=posts_top,
                     posts_creator=session['user']['user_name'],
                     posts_category = posts_category,
-                    posts_tag = posts_tag
+                    posts_tag = posts_tag,
+                    posts_seo = posts_seo
                 )
 
                 if posts_password:
@@ -133,7 +136,8 @@ def article_add(pid=None):
                 Posts.posts_allow,
                 Posts.posts_top,
                 Posts.posts_category,
-                Posts.posts_tag)\
+                Posts.posts_tag,
+                Posts.posts_seo)\
                 .filter(Posts.posts_id==pid).first()
 
         #获取文章分类；

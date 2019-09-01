@@ -12,10 +12,11 @@
         {% for q in qy %}
 			<article class="excerpt excerpt-1" style="">
 				<a class="focus" href="/article/{{ q[0] }}" title="{{ q[1] }}" target="_blank" >
-					<img class="thumb" data-original="{{ url_for('static', filename='images/article_tag.png')}}" src="{{ q[4] }}" alt="{{ q[5] }}"  style="display: inline;">
+					<img class="thumb" data-original="{{ url_for('static', filename='images/article_tag.png')}}" src="{{ q[5] }}" alt="{{ q[6] }}"  style="display: inline;">
 				</a>
-				<header><a class="cat" href="#" title="{{ q[5] }}" >{{ q[5] }}<i></i></a>
-					<h2><a href="/article/{{ q[0] }}" title="{{ q[1] }}" target="_blank" >{{ q[1] }}</a>
+				<header><a class="cat" href="#" title="{{ q[6] }}" >{{ q[6] }}</a>
+					<h2>
+						<a href="/article/{{ q[4] or q[0]  }}" title="{{ q[1] }}" target="_blank" >{{ q[1] }}</a>
 					</h2>
 				</header>
 				<p class="meta">

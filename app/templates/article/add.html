@@ -85,8 +85,16 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">标签：</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" name="posts_tag" value="{{posts[8]}}"  />
+                                <input type="text" class="form-control" name="posts_tag" value="{{posts[8] or ''}}"  />
                                 <span class="help-block m-b-none">使用|分隔</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">SEO-TAG：</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="posts_seo" value="{{posts[9] or ''}}"  />
+                                <span class="help-block m-b-none">URL地址栏-SEO提示</span>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>

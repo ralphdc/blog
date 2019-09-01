@@ -28,8 +28,9 @@ def app_index():
         Posts.posts_title,
         Posts.posts_desc,
         Posts.created_at,
+        Posts.posts_seo,
         Category.category_image,
-        Category.category_content
+        Category.category_content,
     ).outerjoin(Category, Category.category_id==Posts.posts_category)
 
     count = qy.count()
@@ -43,11 +44,12 @@ def app_index():
     return render_template('index.html',  html = html, qy=qy)
 
 @app.route('/article/<int:aid>', methods=['GET'])
-def app_article(aid):
+def app_article_aid(aid):
     if not aid:
         return render_template('404.html')
 
     qy = db.session.query(
+        Posts.posts_id,
         Posts.posts_title,
         Posts.posts_category,
         Posts.posts_allow,
@@ -67,19 +69,60 @@ def app_article(aid):
         .first()
     if not qy or not qy[0]:
         return render_template('404.html')
-    if qy[11]:
-        tags = qy[11].split('|')
+    if qy[12]:
+        tags = qy[12].split('|')
     else:
         tags = None
     recommend = db.session.query(
         Posts.posts_id,
-        Posts.posts_title
+        Posts.posts_title,
+        Posts.posts_seo
     )\
     .filter(and_(Posts.posts_category==qy[10], Posts.posts_id!=aid))\
     .order_by(Posts.created_at.desc()) \
     .limit(10)\
     .all()
-    print(qy[12])
+    return render_template('content.html', content=qy, pageClass="single", tags=tags, recommend=recommend)
+
+@app.route('/article/<string:seoTag>', methods=['GET'])
+def app_article_seoTag(seoTag):
+    if not seoTag:
+        return render_template('404.html')
+
+    qy = db.session.query(
+        Posts.posts_id,
+        Posts.posts_title,
+        Posts.posts_category,
+        Posts.posts_allow,
+        Posts.posts_content,
+        Posts.created_at,
+        Posts.posts_desc,
+        Posts.posts_visit,
+        Posts.posts_comment,
+        Category.category_content,
+        Posts.posts_password,
+        Category.category_id,
+        Posts.posts_tag,
+        Posts.posts_allow
+    )\
+        .outerjoin(Category, Category.category_id==Posts.posts_category)\
+        .filter(and_(Posts.posts_seo==seoTag, Posts.posts_status=='1', Category.category_status=='1'))\
+        .first()
+    if not qy or not qy[0]:
+        return render_template('404.html')
+    if qy[12]:
+        tags = qy[12].split('|')
+    else:
+        tags = None
+    recommend = db.session.query(
+        Posts.posts_id,
+        Posts.posts_title,
+        Posts.posts_seo
+    )\
+    .filter(and_(Posts.posts_category==qy[11], Posts.posts_id!=qy[0]))\
+    .order_by(Posts.created_at.desc()) \
+    .limit(10)\
+    .all()
     return render_template('content.html', content=qy, pageClass="single", tags=tags, recommend=recommend)
 
 

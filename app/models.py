@@ -392,6 +392,7 @@ class Posts(db.Model):
     posts_visit = db.Column(db.Integer, nullable=True)
     posts_category = db.Column(db.String(1024), nullable=True)
     posts_tag = db.Column(db.String(1024), nullable=True)
+    posts_seo = db.Column(db.String(256), nullable=True)
 
     created_at = db.Column(db.DateTime(), nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=func.now(), onupdate=func.now())

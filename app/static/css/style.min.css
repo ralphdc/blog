@@ -141,7 +141,7 @@ body.body-small .navbar-top-links li:last-child {
 }
 .nav-header {
 	padding:33px 25px;
-	background:url(http://ozwpnu2pa.bkt.clouddn.com/header-profile.png) no-repeat
+	#background:url('../images/header.png') no-repeat
 }
 .nav>li.active {
 	border-left:4px solid #19aa8d;
